@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rbc-today {
+  background-color: transparent !important; /* Remove background color */
+  border: none !important; /* Remove border if there is any */
+}
+
+.rbc-current-time-indicator {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* .rbc-toolbar-label {
+    display: none;
+} */
+
+/* .rbc-row {
+    display: none;
+    background-color: blue;
+} */
