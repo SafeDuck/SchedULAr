@@ -2,6 +2,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import Session from "@/components/Session";
+import { getServerSession } from "next-auth";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,7 +21,9 @@ export const metadata = {
   description: "Scheduler created for ULA",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const session = await getServerSession();
+
   return (
     <html lang="en">
       <body
@@ -27,8 +31,10 @@ export default function RootLayout({ children }) {
       >
         <Navbar />
         <div className="w-full flex flex-col items-center justify-center">
-          <Toaster />
-          {children}
+          <Session session={session}>
+            <Toaster />
+            {children}
+          </Session>
         </div>
       </body>
     </html>
