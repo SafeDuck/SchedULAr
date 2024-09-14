@@ -6,7 +6,7 @@ import { db } from "@/utils/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 
-const OfficeHours = () => {
+const HoursForm = () => {
   const { data: session } = useSession();
 
   const hoursRef = useRef(null);
@@ -96,4 +96,4 @@ const OfficeHours = () => {
   );
 };
 
-export default OfficeHours;
+export default HoursForm;
