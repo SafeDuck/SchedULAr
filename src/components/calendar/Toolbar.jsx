@@ -44,9 +44,9 @@ const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
       }
     }
     if (validationFlag === true) {
-      toast("Submitted!"); //TODO: Post request to submit user selections to DB
+      toast.success("Submitted!"); //TODO: Post request to submit user selections to DB
     } else {
-      toast(`Please complete filling out ${courseUnCompleted}`);
+      toast.error(`Please complete filling out ${courseUnCompleted}`);
     }
   };
 

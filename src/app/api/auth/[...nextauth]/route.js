@@ -32,16 +32,16 @@ const authOption = {
         // Check if user already exists in Firestore
         // const userSnap = await getDoc(userRef);
 
-          // Create a new user document in Firestore
-          await setDoc(userRef, {
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            createdAt: new Date().toISOString(),
-            provider: account.provider,
-            ula: 0,
-            admin: 0,
-          });
+        // Create a new user document in Firestore
+        await setDoc(userRef, {
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          createdAt: new Date().toISOString(),
+          provider: account.provider,
+          ula: 0,
+          admin: 0,
+        });
 
         return true;
       } catch (error) {
@@ -49,23 +49,23 @@ const authOption = {
         return false; // This will prevent sign-in
       }
     },
-    
+
     async session({ session, token }) {
       console.log("session function called");
-    
+
       // Fetch latest user data from Firestore
       const userRef = doc(db, "users", token.sub); // Use `token.sub` for user ID
       const userSnap = await getDoc(userRef);
-    
+
       if (userSnap.exists()) {
         const userData = userSnap.data();
-        session.user.ula = userData.ula || 0;     // Fetch ula from Firestore
+        session.user.ula = userData.ula || 0; // Fetch ula from Firestore
         session.user.admin = userData.admin || 0; // Fetch admin from Firestore
       }
-    
+
       return session;
     },
-    
+
     async jwt({ token, user }) {
       console.log("jwt function called");
       if (user) {
