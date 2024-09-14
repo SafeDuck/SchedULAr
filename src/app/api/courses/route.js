@@ -1,5 +1,12 @@
 import { db } from "@/utils/firebase.js";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 function insertColon(str) {
   return str.slice(0, 2) + ":" + str.slice(2);
@@ -66,6 +73,27 @@ export async function POST(req) {
         ),
       );
 
+      // ensure that if a section is removed from r'web, it is also removed from the database
+      const sectionRef = collection(db, "course_data", term, course);
+      const sectionSnap = await getDocs(sectionRef);
+      const existingSections = sectionSnap.docs.map((doc) => doc.data());
+      for (const existingSection of existingSections) {
+        const found = sections.find(
+          (section) => section.section === existingSection.section,
+        );
+        if (!found) {
+          const sectionRef = doc(
+            db,
+            "course_data",
+            term,
+            course,
+            existingSection.section,
+          );
+          await deleteDoc(sectionRef);
+        }
+      }
+
+      // update the database with the new sections
       for (const section of sections) {
         const sectionRef = doc(
           db,
@@ -74,7 +102,7 @@ export async function POST(req) {
           course,
           section.section,
         );
-        await setDoc(sectionRef, section);
+        await setDoc(sectionRef, section, { merge: true });
       }
     }
 

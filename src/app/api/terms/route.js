@@ -9,7 +9,7 @@ export async function GET(req) {
 
     const data = await req.json();
 
-    const terms = data.map(term_obj => term_obj.code);
+    const terms = data.map((term_obj) => term_obj.code);
 
     return Response.json(terms);
   } catch (e) {
