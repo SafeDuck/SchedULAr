@@ -17,12 +17,6 @@ const Landing = () => {
             Lab Hours
           </Link>
           <Link
-            href={"office-hours"}
-            className="bg-blue-300 rounded-xl p-3 hover:bg-blue-400 text-xl"
-          >
-            Office Hours
-          </Link>
-          <Link
             href={"admin"}
             className="bg-blue-300 rounded-xl p-3 hover:bg-blue-400 text-xl"
           >

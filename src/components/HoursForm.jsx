@@ -18,7 +18,7 @@ const HoursForm = () => {
 
     // Check if the user is logged in
     if (!session) {
-      toast.error("You must be signed in to submit office hours.");
+      toast.error("You must be signed in to submit hours.");
       return;
     }
 
@@ -37,8 +37,8 @@ const HoursForm = () => {
       return;
     }
 
-    // Prepare office hours data to be uploaded/updated in Firestore
-    const officeHours = {
+    // Prepare  hours data to be uploaded/updated in Firestore
+    const totalHours = {
       hours: Number(hours),
       sid,
       userName: user.name,
@@ -47,16 +47,16 @@ const HoursForm = () => {
 
     try {
       // Use setDoc to update the document if it exists, or create a new one based on the user email
-      const userDocRef = doc(db, "office-hours", user.email); // Using the user's email as the document ID
-      await setDoc(userDocRef, officeHours, { merge: true }); // merge: true to only update changed fields
-      toast.success("Office hours submitted successfully!");
+      const userDocRef = doc(db, "total_hours", user.email); // Using the user's email as the document ID
+      await setDoc(userDocRef, totalHours, { merge: true }); // merge: true to only update changed fields
+      toast.success("Total hours submitted successfully!");
 
       // Clear form fields after successful submission
       hoursRef.current.value = "";
       sidRef.current.value = "";
     } catch (error) {
-      console.error("Error submitting office hours:", error);
-      toast.error("Failed to submit office hours.");
+      console.error("Error submitting total hours:", error);
+      toast.error("Failed to submit total hours.");
     }
   };
 

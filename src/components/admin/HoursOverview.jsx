@@ -6,35 +6,35 @@ import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 const HoursOverview = () => {
-  const [officeHours, setOfficeHours] = useState([]);
+  const [hours, setHours] = useState([]);
   const [totalHours, setTotalHours] = useState(0);
   const [isEditing, setIsEditing] = useState(null);
   const [editData, setEditData] = useState({});
 
-  // Fetch all documents from "office_hours" collection on component mount
+  // Fetch all documents from "total_hours" collection on component mount
   useEffect(() => {
-    const fetchOfficeHours = async () => {
+    const fetchHours = async () => {
       try {
-        const officeHoursCollection = collection(db, "total_hours");
-        const officeHoursSnapshot = await getDocs(officeHoursCollection);
-        const officeHoursList = officeHoursSnapshot.docs.map((doc) => ({
+        const HoursCollection = collection(db, "total_hours");
+        const HoursSnapshot = await getDocs(HoursCollection);
+        const HoursList = HoursSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
         // Calculate the sum of all hours
-        const total = officeHoursList.reduce(
+        const total = HoursList.reduce(
           (sum, doc) => sum + parseFloat(doc.hours || 0),
           0,
         );
-        setOfficeHours(officeHoursList);
+        setHours(HoursList);
         setTotalHours(total);
       } catch (error) {
-        console.error("Error fetching office hours:", error);
+        console.error("Error fetching total hours:", error);
       }
     };
 
-    fetchOfficeHours();
+    fetchHours();
   }, []);
 
   const handleEditClick = (id, data) => {
@@ -44,20 +44,20 @@ const HoursOverview = () => {
 
   const handleSaveClick = async (id) => {
     try {
-      const docRef = doc(db, "office-hours", id);
+      const docRef = doc(db, "total_hours", id);
       await updateDoc(docRef, {
         hours: editData.hours,
       });
 
       // Update the local state with the new edited data
-      setOfficeHours((prev) =>
+      setHours((prev) =>
         prev.map((doc) =>
           doc.id === id ? { ...doc, hours: editData.hours } : doc,
         ),
       );
 
       // Recalculate the total hours
-      const total = officeHours.reduce(
+      const total = hours.reduce(
         (sum, doc) =>
           sum +
           (doc.id === id
@@ -87,7 +87,7 @@ const HoursOverview = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <h2 className="text-2xl font-semibold mb-4">Office Hours Overview</h2>
+      <h2 className="text-2xl font-semibold mb-4">Total Hours Overview</h2>
       <table className="table-auto border-collapse border border-gray-400 w-3/4">
         <thead>
           <tr>
@@ -100,8 +100,8 @@ const HoursOverview = () => {
           </tr>
         </thead>
         <tbody>
-          {officeHours.length > 0 ? (
-            officeHours.map((doc) => (
+          {hours.length > 0 ? (
+            hours.map((doc) => (
               <tr key={doc.id}>
                 <td className="border border-gray-400 p-2">{doc.userName}</td>
                 <td className="border border-gray-400 p-2">{doc.userEmail}</td>
@@ -159,7 +159,7 @@ const HoursOverview = () => {
                 colSpan="6"
                 className="border border-gray-400 p-2 text-center"
               >
-                No office hours submitted yet.
+                No total hours submitted yet.
               </td>
             </tr>
           )}
