@@ -1,14 +1,12 @@
 'use client';
 
 import { useSession } from "next-auth/react";
-import CalendarEvents from "@/components/calendar/Events";
-import Profile from "@/components/Profile";
 
 const Page = () => {
   const { data: session } = useSession();
 
   if (!session) {
-    return <p>Loading...</p>;
+    return <p>Loading...</p>; // Show loading state while session is being fetched
   }
 
   const { ula, admin } = session.user;
@@ -23,8 +21,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <Profile />
-      <CalendarEvents />
+      TODO: Office hours spreadsheet
     </div>
   );
 };
