@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import CalendarEvents from "@/components/calendar/Events";
 import Profile from "@/components/Profile";
-import OfficeHours from "@/components/HoursForm";
+import HoursForm from "@/components/HoursForm";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -28,7 +28,7 @@ const Page = () => {
     <div className="w-full flex flex-col justify-center items-center">
       <Profile />
       <CalendarEvents />
-      <OfficeHours />
+      <HoursForm />
     </div>
   );
 };
