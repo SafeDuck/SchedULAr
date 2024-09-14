@@ -1,10 +1,9 @@
 import React from "react";
-import CalendarEvents from "@/components/calendar/Events";
-
+import Landing from "@/components/Landing";
 const page = () => {
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <CalendarEvents />
+    <div className="w-full flex justify-center items-center">
+      <Landing />
     </div>
   );
 };
