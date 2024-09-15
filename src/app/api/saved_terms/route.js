@@ -1,11 +1,11 @@
 import { db } from "@/utils/firebase.js";
-import { collection, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 export async function GET() {
   try {
-    const savedTermsRef = collection(db, "course_data");
-    const savedTermsSnap = await getDocs(savedTermsRef);
-    const savedTerms = savedTermsSnap.docs.map((doc) => doc.id);
+    const savedTermsRef = doc(db, "settings", "terms");
+    const savedTermsSnap = await getDoc(savedTermsRef);
+    const savedTerms = savedTermsSnap.data().terms;
 
     return Response.json(savedTerms);
   } catch (e) {

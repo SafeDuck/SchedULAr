@@ -12,6 +12,22 @@ function insertColon(str) {
   return str.slice(0, 2) + ":" + str.slice(2);
 }
 
+function roundUpToNearestHalfHour(time) {
+  const [hour, minute] = time.split(":").map(Number);
+  const newMinute = Math.ceil(minute / 30) * 30;
+  if (newMinute === 60) {
+    return `${(hour + 1) % 24}:00`;
+  }
+  return `${hour}:${newMinute}`;
+}
+
+function intervalLength(beginTime, endTime) {
+  const [beginHour, beginMinute] = beginTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  return endHour - beginHour + (endMinute - beginMinute) / 60;
+}
+
 export async function POST(req) {
   try {
     const { term } = await req.json();
@@ -19,7 +35,7 @@ export async function POST(req) {
       throw new Error("No term provided.");
     }
 
-    const courseRef = doc(db, "defaults", "courses");
+    const courseRef = doc(db, "settings", "courses");
     const courseSnap = await getDoc(courseRef);
     const courses = courseSnap.data().courses;
 
@@ -66,23 +82,26 @@ export async function POST(req) {
                 meeting.meetingTime.meetingType === "LAB" &&
                 meeting.meetingTime[day],
             )
-            .map((day) => ({
-              section: section.sequenceNumber,
-              day,
-              begin_time: insertColon(meeting.meetingTime.beginTime),
-              end_time: insertColon(meeting.meetingTime.endTime),
-              instruction_method: section.instructionalMethodDescription,
-            })),
+            .map((day) => {
+              let beginTime = insertColon(meeting.meetingTime.beginTime);
+              let endTime = roundUpToNearestHalfHour(
+                insertColon(meeting.meetingTime.endTime),
+              );
+
+              return {
+                section: section.sequenceNumber,
+                day,
+                begin_time: beginTime,
+                end_time: endTime,
+                length: intervalLength(beginTime, endTime),
+                instruction_method: section.instructionalMethodDescription,
+              };
+            }),
         ),
       );
 
-      // ensure that the term exists in the database 
-      // (implictly created documnts can't be queried)
-      const termRef = doc(db, "course_data", term);
-      setDoc(termRef, {}, { merge: true });
-
       // ensure that if a section is removed from r'web, it is also removed from the database
-      const sectionRef = collection(db, "course_data", term, course);
+      const sectionRef = collection(db, term, "courses", course);
       const sectionSnap = await getDocs(sectionRef);
       const existingSections = sectionSnap.docs.map((doc) => doc.data());
       for (const existingSection of existingSections) {
@@ -92,8 +111,8 @@ export async function POST(req) {
         if (!found) {
           const sectionRef = doc(
             db,
-            "course_data",
             term,
+            "courses",
             course,
             existingSection.section,
           );
@@ -103,15 +122,17 @@ export async function POST(req) {
 
       // update the database with the new sections
       for (const section of sections) {
-        const sectionRef = doc(
-          db,
-          "course_data",
-          term,
-          course,
-          section.section,
-        );
+        const sectionRef = doc(db, term, "courses", course, section.section);
         await setDoc(sectionRef, section, { merge: true });
       }
+
+      // store list of courses under the term
+      const termRef = doc(db, term, "course_list");
+      await setDoc(termRef, { courses });
+
+      // store term in /settings/terms list
+      const termsRef = doc(db, "settings", "terms");
+      setDoc(termsRef, { terms: [term] }, { merge: true });
     }
 
     return new Response("Success", {
