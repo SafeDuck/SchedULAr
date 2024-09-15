@@ -5,9 +5,8 @@ import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
-import { calendars } from "../../data/calendars";
 import CustomToolbar from "./Toolbar";
-
+import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
@@ -28,11 +27,15 @@ const convertToDate = (day, time) => {
 };
 
 const CalendarEvents = () => {
+  const session = useSession();
+  const userId = session.data.user.id;
+
   const { data: courseList } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
       const response = await fetch("/api/course_list");
-      return response.json();
+      const courseList = await response.json();
+      return courseList.sort((a, b) => a.localeCompare(b));
     },
     initialData: [],
   });
@@ -53,6 +56,9 @@ const CalendarEvents = () => {
         section: section.section,
         start: convertToDate(section.day, section.begin_time),
         end: convertToDate(section.day, section.end_time),
+        preferred: section.preferred,
+        available: section.available,
+        unavailable: section.unavailable,
       }));
 
       if (!(currentCourse in eventStates)) {
@@ -61,6 +67,9 @@ const CalendarEvents = () => {
           [currentCourse]: sections.map((section) => ({
             id: section.id,
             section: section.section,
+            preferred: section.preferred?.includes(userId) || false,
+            available: section.available?.includes(userId) || false,
+            unavailable: section.unavailable?.includes(userId) || false,
           })),
         });
       }
@@ -118,8 +127,8 @@ const CalendarEvents = () => {
               toolbar: (props) => (
                 <CustomToolbar
                   {...props}
-                  setCalendar={setCurrentCourse}
-                  calendar={currentCourse}
+                  currentCourse={currentCourse}
+                  setCurrentCourse={setCurrentCourse}
                   userSelection={eventStates}
                   courseList={courseList}
                 />

@@ -2,58 +2,59 @@ import Tag from "./Tag";
 import toast from "react-hot-toast";
 
 const CustomToolbar = ({
-  calendar,
-  setCalendar,
+  currentCourse,
+  setCurrentCourse,
   userSelection,
   courseList,
 }) => {
-  const handleSubmit = () => {
-    // Create a dictionary with course as keys and an object of filled status as values
-    const count_true = (event) => {
-      let count = 0;
-      for (let key in event) {
-        if (
-          (key === "preferred" ||
-            key === "available" ||
-            key === "unavailable") &&
-          event[key] === true
-        ) {
-          count = count + 1;
+  const handleSubmit = async () => {
+    const courses = Object.keys(userSelection);
+
+    // move currentCourse to beginning of courses
+    const index = courses.indexOf(currentCourse);
+    if (index > -1) {
+      courses.splice(index, 1);
+    }
+    courses.unshift(currentCourse);
+
+    const selection = {};
+    for (const course of courses) {
+      let selectionInCourse = false;
+      let unselectedInCourse = false;
+      for (const section of userSelection[course]) {
+        if (section.preferred || section.available || section.unavailable) {
+          selectionInCourse = true;
+        } else {
+          unselectedInCourse = true;
+        }
+        if (selectionInCourse && unselectedInCourse) {
+          toast.error(`Please finish filling out ${course}`);
+          return;
         }
       }
-      return count;
-    };
-
-    let dict = {};
-    userSelection.forEach((event) => {
-      if (!dict[event.course]) {
-        dict[event.course] = {
-          numSelected: count_true(event),
-          totalCourses: 1,
-        };
-      } else {
-        dict[event.course].numSelected += count_true(event);
-        dict[event.course].totalCourses += 1;
-      }
-    });
-
-    //validate user's selection to make sure they filled out everything
-
-    let validationFlag = true;
-    let courseUnCompleted;
-    for (let course in dict) {
-      const userSelected = dict[course].numSelected;
-      const totalCourses = dict[course].totalCourses;
-      if (userSelected !== totalCourses && userSelected > 0) {
-        validationFlag = false;
-        courseUnCompleted = course;
-        break;
+      if (selectionInCourse) {
+        selection[course] = userSelection[course];
       }
     }
-    if (validationFlag === true) {
-      toast.success("Submitted!"); //TODO: Post request to submit user selections to DB
+
+    if (Object.keys(selection).length === 0) {
+      toast.error("Please fill out at least one section");
+      return;
+    }
+    
+    // send selection to backend
+    const req = await fetch("/api/course_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selection),
+    })
+
+    if (req.ok) {
+      toast.success("Selection submitted");
     } else {
-      toast.error(`Please complete filling out ${courseUnCompleted}`);
+      toast.error("Failed to submit selection");
     }
   };
 
@@ -62,7 +63,7 @@ const CustomToolbar = ({
       <div className="w-full flex justify-between items-center flex-col md:flex-row">
         <button
           onClick={handleSubmit}
-          className="bg-blue-200 hover:bg-blue-300 p-4 rounded-lg"
+          className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded m-2 disabled"
         >
           Submit
         </button>
@@ -71,8 +72,8 @@ const CustomToolbar = ({
             <Tag
               key={course}
               title={course}
-              onClick={() => setCalendar(course)}
-              selected={calendar === course}
+              onClick={() => setCurrentCourse(course)}
+              selected={currentCourse === course}
             />
           ))}
         </div>
