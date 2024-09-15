@@ -34,11 +34,12 @@ const CalendarEvents = () => {
       const response = await fetch("/api/course_list");
       return response.json();
     },
+    initialData: [],
   });
 
   const [currentCourse, setCurrentCourse] = useState("CS009A");
 
-  const [eventStates, setEventStates] = useState([]);
+  const [eventStates, setEventStates] = useState({});
 
   const { data: sections } = useQuery({
     queryKey: ["sections", currentCourse],
@@ -49,20 +50,20 @@ const CalendarEvents = () => {
       const sections = sectionData.map((section) => ({
         id: section.id,
         title: `${currentCourse} - ${section.section}`,
-        class: currentCourse,
+        section: section.section,
         start: convertToDate(section.day, section.begin_time),
         end: convertToDate(section.day, section.end_time),
       }));
 
-      setEventStates(
-        sections.map((section) => ({
-          id: section.id,
-          course: section.class,
-          preferred: false,
-          available: false,
-          unavailable: false,
-        })),
-      );
+      if (!(currentCourse in eventStates)) {
+        setEventStates({
+          ...eventStates,
+          [currentCourse]: sections.map((section) => ({
+            id: section.id,
+            section: section.section,
+          })),
+        });
+      }
 
       return sections;
     },
@@ -70,24 +71,24 @@ const CalendarEvents = () => {
     initialData: [],
   });
 
-  console.log(eventStates)
-
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (eventId, iconType) => {
-    setEventStates((prevStates) =>
-      prevStates.map((event) => {
+    setEventStates((prevStates) => ({
+      ...prevStates,
+      [currentCourse]: prevStates[currentCourse].map((event) => {
         if (event.id === eventId) {
           // Toggle the state of the clicked icon
           return {
             ...event,
-            preferred: iconType === "checkDouble" ? !event.preferred : false,
-            available: iconType === "check" ? !event.available : false,
-            unavailable: iconType === "no" ? !event.unavailable : false,
+            preferred: iconType === "preferred" ? !event.preferred : false,
+            available: iconType === "available" ? !event.available : false,
+            unavailable:
+              iconType === "unavailable" ? !event.unavailable : false,
           };
         }
         return event;
       }),
-    );
+    }));
   };
 
   return (
@@ -108,7 +109,7 @@ const CalendarEvents = () => {
               event: (props) => (
                 <CustomEvent
                   {...props}
-                  eventState={eventStates.find(
+                  eventState={eventStates[currentCourse].find(
                     (state) => state.id === props.event.id,
                   )}
                   onEventClick={handleEventClick}
@@ -120,7 +121,7 @@ const CalendarEvents = () => {
                   setCalendar={setCurrentCourse}
                   calendar={currentCourse}
                   userSelection={eventStates}
-                  courseList={courseList || []}
+                  courseList={courseList}
                 />
               ),
             }}

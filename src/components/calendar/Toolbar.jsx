@@ -1,7 +1,12 @@
 import Tag from "./Tag";
 import toast from "react-hot-toast";
 
-const CustomToolbar = ({ calendar, setCalendar, userSelection, courseList }) => {
+const CustomToolbar = ({
+  calendar,
+  setCalendar,
+  userSelection,
+  courseList,
+}) => {
   const handleSubmit = () => {
     // Create a dictionary with course as keys and an object of filled status as values
     const count_true = (event) => {
