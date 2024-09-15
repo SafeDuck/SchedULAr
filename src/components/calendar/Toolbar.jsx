@@ -1,7 +1,7 @@
 import Tag from "./Tag";
 import toast from "react-hot-toast";
 
-const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
+const CustomToolbar = ({ calendar, setCalendar, userSelection, courseList }) => {
   const handleSubmit = () => {
     // Create a dictionary with course as keys and an object of filled status as values
     const count_true = (event) => {
@@ -62,46 +62,14 @@ const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
           Submit
         </button>
         <div className="flex w-full justify-center md:justify-end flex-wrap md:flex-nowrap">
-          <Tag
-            title="CS 009A"
-            onClick={() => setCalendar(0)}
-            selected={calendar.name === "CS009A"}
-          />
-          <Tag
-            title="CS 009B"
-            onClick={() => setCalendar(1)}
-            selected={calendar.name === "CS009B"}
-          />
-          <Tag
-            title="CS 009C"
-            onClick={() => setCalendar(2)}
-            selected={calendar.name === "CS009C"}
-          />
-          <Tag
-            title="CS 010A"
-            onClick={() => setCalendar(3)}
-            selected={calendar.name === "CS010A"}
-          />
-          <Tag
-            title="CS 010B"
-            onClick={() => setCalendar(4)}
-            selected={calendar.name === "CS010B"}
-          />
-          <Tag
-            title="CS 010C"
-            onClick={() => setCalendar(5)}
-            selected={calendar.name === "CS010C"}
-          />
-          <Tag
-            title="CS 061"
-            onClick={() => setCalendar(6)}
-            selected={calendar.name === "CS061"}
-          />
-          <Tag
-            title="CS 100"
-            onClick={() => setCalendar(7)}
-            selected={calendar.name === "CS100"}
-          />
+          {courseList.map((course) => (
+            <Tag
+              key={course}
+              title={course}
+              onClick={() => setCalendar(course)}
+              selected={calendar === course}
+            />
+          ))}
         </div>
       </div>
     </div>

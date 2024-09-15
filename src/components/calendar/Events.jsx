@@ -5,32 +5,73 @@ import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
-import events from "../../data/mockEvents.js";
 import { calendars } from "../../data/calendars";
 import CustomToolbar from "./Toolbar";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { useQuery } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
 
-const CalendarEvents = () => {
-  const queryClient = useQueryClient();
-  const query = useQuery("events", () =>
-    fetch(`/api/courses?`).then((res) => res.json()),
-  );
+const convertToDate = (day, time) => {
+  const date = new Date(2023, 0, 2);
+  const dayIndex = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+  ].indexOf(day);
+  date.setDate(date.getDate() + dayIndex);
+  date.setHours(parseInt(time.split(":")[0]));
+  date.setMinutes(parseInt(time.split(":")[1]));
+  return date;
+};
 
-  const [current, setCurrent] = useState(0);
-  const [eventStates, setEventStates] = useState(
-    events.flatMap((eventList) =>
-      eventList.map((event) => ({
-        id: event.id,
-        course: event.class,
-        preferred: false,
-        available: false,
-        unavailable: false,
-      })),
-    ),
-  );
-  console.log(eventStates);
+const CalendarEvents = () => {
+  const { data: courseList } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const response = await fetch("/api/course_list");
+      return response.json();
+    },
+  });
+
+  const [currentCourse, setCurrentCourse] = useState("CS009A");
+
+  const [eventStates, setEventStates] = useState([]);
+
+  const { data: sections } = useQuery({
+    queryKey: ["sections", currentCourse],
+    queryFn: async () => {
+      const response = await fetch(`/api/course_data?course=${currentCourse}`);
+      const sectionData = await response.json();
+
+      const sections = sectionData.map((section) => ({
+        id: section.id,
+        title: `${currentCourse} - ${section.section}`,
+        class: currentCourse,
+        start: convertToDate(section.day, section.begin_time),
+        end: convertToDate(section.day, section.end_time),
+      }));
+
+      setEventStates(
+        sections.map((section) => ({
+          id: section.id,
+          course: section.class,
+          preferred: false,
+          available: false,
+          unavailable: false,
+        })),
+      );
+
+      return sections;
+    },
+    enabled: !!courseList,
+    initialData: [],
+  });
+
+  console.log(eventStates)
+
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (eventId, iconType) => {
     setEventStates((prevStates) =>
@@ -39,10 +80,9 @@ const CalendarEvents = () => {
           // Toggle the state of the clicked icon
           return {
             ...event,
-            preferred: iconType === "preferred" ? !event.preferred : false,
-            available: iconType === "available" ? !event.available : false,
-            unavailable:
-              iconType === "unavailable" ? !event.unavailable : false,
+            preferred: iconType === "checkDouble" ? !event.preferred : false,
+            available: iconType === "check" ? !event.available : false,
+            unavailable: iconType === "no" ? !event.unavailable : false,
           };
         }
         return event;
@@ -53,10 +93,10 @@ const CalendarEvents = () => {
   return (
     <section className="w-full flex justify-center items-center flex-col mt-[6vh]">
       <div className="w-11/12 flex justify-center items-center">
-        <div className="w-full relative">
+        <div className="w-full h-[90vh] relative">
           <Calendar
             className="w-full m-0 p-0"
-            events={events[current]}
+            events={sections}
             localizer={mLocalizer}
             defaultDate={new Date(2023, 0, 1)}
             defaultView={"work_week"}
@@ -77,9 +117,10 @@ const CalendarEvents = () => {
               toolbar: (props) => (
                 <CustomToolbar
                   {...props}
-                  setCalendar={setCurrent}
-                  calendar={{ name: calendars[current].name }}
+                  setCalendar={setCurrentCourse}
+                  calendar={currentCourse}
                   userSelection={eventStates}
+                  courseList={courseList || []}
                 />
               ),
             }}

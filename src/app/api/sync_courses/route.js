@@ -89,6 +89,7 @@ export async function POST(req) {
               );
 
               return {
+                id: section.id,
                 section: section.sequenceNumber,
                 day,
                 begin_time: beginTime,
