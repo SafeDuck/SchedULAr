@@ -8,22 +8,29 @@ import CustomEvent from "./CustomEvent";
 import events from "../../data/mockEvents.js";
 import { calendars } from "../../data/calendars";
 import CustomToolbar from "./Toolbar";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
 
 const CalendarEvents = () => {
+  const queryClient = useQueryClient();
+  const query = useQuery("events", () =>
+    fetch(`/api/courses?`).then((res) => res.json()),
+  );
+
   const [current, setCurrent] = useState(0);
   const [eventStates, setEventStates] = useState(
     events.flatMap((eventList) =>
       eventList.map((event) => ({
         id: event.id,
         course: event.class,
-        checkDouble: false,
-        check: false,
-        no: false,
+        preferred: false,
+        available: false,
+        unavailable: false,
       })),
     ),
   );
+  console.log(eventStates);
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (eventId, iconType) => {
     setEventStates((prevStates) =>
@@ -32,10 +39,10 @@ const CalendarEvents = () => {
           // Toggle the state of the clicked icon
           return {
             ...event,
-            checkDouble:
-              iconType === "checkDouble" ? !event.checkDouble : false,
-            check: iconType === "check" ? !event.check : false,
-            no: iconType === "no" ? !event.no : false,
+            preferred: iconType === "preferred" ? !event.preferred : false,
+            available: iconType === "available" ? !event.available : false,
+            unavailable:
+              iconType === "unavailable" ? !event.unavailable : false,
           };
         }
         return event;

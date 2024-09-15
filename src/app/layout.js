@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Session from "@/components/Session";
 import { getServerSession } from "next-auth";
+import { ReactQueryClientProvider } from "@/utils/react-query";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,18 +26,20 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession();
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
-      >
-        <Navbar />
-        <div className="w-full flex flex-col items-center justify-center">
-          <Session session={session}>
-            <Toaster />
-            {children}
-          </Session>
-        </div>
-      </body>
-    </html>
+    <ReactQueryClientProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
+        >
+          <Navbar />
+          <div className="w-full flex flex-col items-center justify-center">
+            <Session session={session}>
+              <Toaster />
+              {children}
+            </Session>
+          </div>
+        </body>
+      </html>
+    </ReactQueryClientProvider>
   );
 }

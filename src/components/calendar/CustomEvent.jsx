@@ -12,27 +12,27 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
       <div className="flex flex-row justify-center gap-4 text-3xl">
         <LiaCheckDoubleSolid
           className={`${
-            eventState?.checkDouble
+            eventState?.preferred
               ? "bg-[#225b8c] rounded-lg text-green-300"
               : "text-white"
-          } ${!eventState?.checkDouble ? "hover:text-green-300" : ""}  p-0.5`}
-          onClick={() => onEventClick(event.id, "checkDouble")}
+          } ${!eventState?.preferred ? "hover:text-green-300" : ""}  p-0.5`}
+          onClick={() => onEventClick(event.id, "preferred")}
         />
         <LiaCheckSolid
           className={`${
-            eventState?.check
+            eventState?.available
               ? "bg-[#225b8c] rounded-lg text-yellow-300"
               : "text-white"
-          } ${!eventState?.check ? "hover:text-yellow-300" : ""} p-0.5`}
-          onClick={() => onEventClick(event.id, "check")}
+          } ${!eventState?.available ? "hover:text-yellow-300" : ""} p-0.5`}
+          onClick={() => onEventClick(event.id, "available")}
         />
         <LiaTimesSolid
           className={`${
-            eventState?.no
+            eventState?.unavailable
               ? "bg-[#225b8c] rounded-lg text-red-300"
               : "text-white"
-          } ${!eventState?.no ? "hover:text-red-300" : ""}  p-0.5`}
-          onClick={() => onEventClick(event.id, "no")}
+          } ${!eventState?.unavailable ? "hover:text-red-300" : ""}  p-0.5`}
+          onClick={() => onEventClick(event.id, "unavailable")}
         />
       </div>
     </div>

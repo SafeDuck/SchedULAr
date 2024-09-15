@@ -8,7 +8,9 @@ const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
       let count = 0;
       for (let key in event) {
         if (
-          (key === "checkDouble" || key === "check" || key === "no") &&
+          (key === "preferred" ||
+            key === "available" ||
+            key === "unavailable") &&
           event[key] === true
         ) {
           count = count + 1;
