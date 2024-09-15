@@ -49,7 +49,7 @@ const CalendarEvents = () => {
 
       const sections = sectionData.map((section) => ({
         id: section.id,
-        title: `${currentCourse} - ${section.section}`,
+        title: `Sec ${section.section}`,
         section: section.section,
         start: convertToDate(section.day, section.begin_time),
         end: convertToDate(section.day, section.end_time),
