@@ -66,11 +66,17 @@ export async function POST(req) {
             available: arrayRemove(user_id),
             unavailable: arrayUnion(user_id),
           });
+        } else {
+          await updateDoc(sectionRef, {
+            preferred: arrayRemove(user_id),
+            available: arrayRemove(user_id),
+            unavailable: arrayRemove(user_id),
+          });
         }
       }
     }
 
-    return new Response("Success")
+    return new Response("Success");
   } catch (e) {
     return new Response(e.message, {
       status: 500,

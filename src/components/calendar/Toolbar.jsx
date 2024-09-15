@@ -17,7 +17,6 @@ const CustomToolbar = ({
     }
     courses.unshift(currentCourse);
 
-    const selection = {};
     for (const course of courses) {
       let selectionInCourse = false;
       let unselectedInCourse = false;
@@ -32,23 +31,15 @@ const CustomToolbar = ({
           return;
         }
       }
-      if (selectionInCourse) {
-        selection[course] = userSelection[course];
-      }
     }
 
-    if (Object.keys(selection).length === 0) {
-      toast.error("Please fill out at least one section");
-      return;
-    }
-    
     // send selection to backend
     const req = await fetch("/api/course_data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(selection),
+      body: JSON.stringify(userSelection),
     })
 
     if (req.ok) {
