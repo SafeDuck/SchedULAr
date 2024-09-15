@@ -6,6 +6,7 @@ import {
   getDocs,
   setDoc,
   deleteDoc,
+  arrayUnion,
 } from "firebase/firestore";
 
 function insertColon(str) {
@@ -133,7 +134,7 @@ export async function POST(req) {
 
       // store term in /settings/terms list
       const termsRef = doc(db, "settings", "terms");
-      setDoc(termsRef, { terms: [term] }, { merge: true });
+      setDoc(termsRef, { terms: arrayUnion(term) });
     }
 
     return new Response("Success", {
