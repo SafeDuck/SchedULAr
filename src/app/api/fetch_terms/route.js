@@ -1,4 +1,4 @@
-export async function GET(req) {
+export async function GET() {
   try {
     const req = await fetch(
       "https://registrationssb.ucr.edu/StudentRegistrationSsb/ssb/classSearch/getTerms?offset=1&max=10",
