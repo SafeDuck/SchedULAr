@@ -9,9 +9,9 @@ export async function GET() {
 
     const courseRef = doc(db, term, "course_list");
     const courseSnap = await getDoc(courseRef);
-    const course_data = courseSnap.data();
+    const { courses } = courseSnap.data();
 
-    return Response.json(course_data);
+    return Response.json(courses);
   } catch (e) {
     return new Response(e.message, {
       status: 500,

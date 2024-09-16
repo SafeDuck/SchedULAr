@@ -7,7 +7,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
-const authOption = {
+const authOptions = {
   session: {
     strategy: "jwt",
   },
@@ -61,6 +61,7 @@ const authOption = {
         const userData = userSnap.data();
         session.user.ula = userData.ula || 0; // Fetch ula from Firestore
         session.user.admin = userData.admin || 0; // Fetch admin from Firestore
+        session.user.id = token.sub;
       }
 
       return session;
@@ -84,5 +85,5 @@ const authOption = {
   },
 };
 
-const handler = NextAuth(authOption);
-export { handler as GET, handler as POST };
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST, authOptions };

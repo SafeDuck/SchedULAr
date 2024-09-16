@@ -5,36 +5,86 @@ import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
-import events from "../../data/mockEvents.js";
-import { calendars } from "../../data/calendars";
 import CustomToolbar from "./Toolbar";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
 
-const CalendarEvents = () => {
-  const queryClient = useQueryClient();
-  const query = useQuery("events", () =>
-    fetch(`/api/courses?`).then((res) => res.json()),
-  );
+const convertToDate = (day, time) => {
+  const date = new Date(2023, 0, 2);
+  const dayIndex = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+  ].indexOf(day);
+  date.setDate(date.getDate() + dayIndex);
+  date.setHours(parseInt(time.split(":")[0]));
+  date.setMinutes(parseInt(time.split(":")[1]));
+  return date;
+};
 
-  const [current, setCurrent] = useState(0);
-  const [eventStates, setEventStates] = useState(
-    events.flatMap((eventList) =>
-      eventList.map((event) => ({
-        id: event.id,
-        course: event.class,
-        preferred: false,
-        available: false,
-        unavailable: false,
-      })),
-    ),
-  );
-  console.log(eventStates);
+const CalendarEvents = () => {
+  const session = useSession();
+  const userId = session.data.user.id;
+
+  const { data: courseList } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const response = await fetch("/api/course_list");
+      const courseList = await response.json();
+      return courseList.sort((a, b) => a.localeCompare(b));
+    },
+    initialData: [],
+  });
+
+  const [currentCourse, setCurrentCourse] = useState("CS009A");
+
+  const [eventStates, setEventStates] = useState({});
+
+  const { data: sections } = useQuery({
+    queryKey: ["sections", currentCourse],
+    queryFn: async () => {
+      const response = await fetch(`/api/course_data?course=${currentCourse}`);
+      const sectionData = await response.json();
+
+      const sections = sectionData.map((section) => ({
+        id: section.id,
+        title: `Sec ${section.section}`,
+        section: section.section,
+        start: convertToDate(section.day, section.begin_time),
+        end: convertToDate(section.day, section.end_time),
+        preferred: section.preferred,
+        available: section.available,
+        unavailable: section.unavailable,
+      }));
+
+      if (!(currentCourse in eventStates)) {
+        setEventStates({
+          ...eventStates,
+          [currentCourse]: sections.map((section) => ({
+            id: section.id,
+            section: section.section,
+            preferred: section.preferred?.includes(userId) || false,
+            available: section.available?.includes(userId) || false,
+            unavailable: section.unavailable?.includes(userId) || false,
+          })),
+        });
+      }
+
+      return sections;
+    },
+    enabled: !!courseList,
+    initialData: [],
+  });
+
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (eventId, iconType) => {
-    setEventStates((prevStates) =>
-      prevStates.map((event) => {
+    setEventStates((prevStates) => ({
+      ...prevStates,
+      [currentCourse]: prevStates[currentCourse].map((event) => {
         if (event.id === eventId) {
           // Toggle the state of the clicked icon
           return {
@@ -47,16 +97,16 @@ const CalendarEvents = () => {
         }
         return event;
       }),
-    );
+    }));
   };
 
   return (
     <section className="w-full flex justify-center items-center flex-col mt-[6vh]">
       <div className="w-11/12 flex justify-center items-center">
-        <div className="w-full relative">
+        <div className="w-full h-[90vh] relative">
           <Calendar
             className="w-full m-0 p-0"
-            events={events[current]}
+            events={sections}
             localizer={mLocalizer}
             defaultDate={new Date(2023, 0, 1)}
             defaultView={"work_week"}
@@ -68,7 +118,7 @@ const CalendarEvents = () => {
               event: (props) => (
                 <CustomEvent
                   {...props}
-                  eventState={eventStates.find(
+                  eventState={eventStates[currentCourse].find(
                     (state) => state.id === props.event.id,
                   )}
                   onEventClick={handleEventClick}
@@ -77,9 +127,10 @@ const CalendarEvents = () => {
               toolbar: (props) => (
                 <CustomToolbar
                   {...props}
-                  setCalendar={setCurrent}
-                  calendar={{ name: calendars[current].name }}
+                  currentCourse={currentCourse}
+                  setCurrentCourse={setCurrentCourse}
                   userSelection={eventStates}
+                  courseList={courseList}
                 />
               ),
             }}

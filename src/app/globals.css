@@ -12,11 +12,9 @@
   border: none !important;
 }
 
-/* .rbc-toolbar-label {
-    display: none;
-} */
-
-/* .rbc-row {
-    display: none;
-    background-color: blue;
-} */
+.rbc-allday-cell {
+  display: none;
+}
+.rbc-time-view .rbc-header {
+  border-bottom: none;
+}

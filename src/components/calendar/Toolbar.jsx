@@ -1,54 +1,51 @@
 import Tag from "./Tag";
 import toast from "react-hot-toast";
 
-const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
-  const handleSubmit = () => {
-    // Create a dictionary with course as keys and an object of filled status as values
-    const count_true = (event) => {
-      let count = 0;
-      for (let key in event) {
-        if (
-          (key === "preferred" ||
-            key === "available" ||
-            key === "unavailable") &&
-          event[key] === true
-        ) {
-          count = count + 1;
+const CustomToolbar = ({
+  currentCourse,
+  setCurrentCourse,
+  userSelection,
+  courseList,
+}) => {
+  const handleSubmit = async () => {
+    const courses = Object.keys(userSelection);
+
+    // move currentCourse to beginning of courses
+    const index = courses.indexOf(currentCourse);
+    if (index > -1) {
+      courses.splice(index, 1);
+    }
+    courses.unshift(currentCourse);
+
+    for (const course of courses) {
+      let selectionInCourse = false;
+      let unselectedInCourse = false;
+      for (const section of userSelection[course]) {
+        if (section.preferred || section.available || section.unavailable) {
+          selectionInCourse = true;
+        } else {
+          unselectedInCourse = true;
+        }
+        if (selectionInCourse && unselectedInCourse) {
+          toast.error(`Please finish filling out ${course}`);
+          return;
         }
       }
-      return count;
-    };
-
-    let dict = {};
-    userSelection.forEach((event) => {
-      if (!dict[event.course]) {
-        dict[event.course] = {
-          numSelected: count_true(event),
-          totalCourses: 1,
-        };
-      } else {
-        dict[event.course].numSelected += count_true(event);
-        dict[event.course].totalCourses += 1;
-      }
-    });
-
-    //validate user's selection to make sure they filled out everything
-
-    let validationFlag = true;
-    let courseUnCompleted;
-    for (let course in dict) {
-      const userSelected = dict[course].numSelected;
-      const totalCourses = dict[course].totalCourses;
-      if (userSelected !== totalCourses && userSelected > 0) {
-        validationFlag = false;
-        courseUnCompleted = course;
-        break;
-      }
     }
-    if (validationFlag === true) {
-      toast.success("Submitted!"); //TODO: Post request to submit user selections to DB
+
+    // send selection to backend
+    const req = await fetch("/api/course_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userSelection),
+    })
+
+    if (req.ok) {
+      toast.success("Selection submitted");
     } else {
-      toast.error(`Please complete filling out ${courseUnCompleted}`);
+      toast.error("Failed to submit selection");
     }
   };
 
@@ -57,51 +54,19 @@ const CustomToolbar = ({ calendar, setCalendar, userSelection }) => {
       <div className="w-full flex justify-between items-center flex-col md:flex-row">
         <button
           onClick={handleSubmit}
-          className="bg-blue-200 hover:bg-blue-300 p-4 rounded-lg"
+          className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded m-2 disabled"
         >
           Submit
         </button>
         <div className="flex w-full justify-center md:justify-end flex-wrap md:flex-nowrap">
-          <Tag
-            title="CS 009A"
-            onClick={() => setCalendar(0)}
-            selected={calendar.name === "CS009A"}
-          />
-          <Tag
-            title="CS 009B"
-            onClick={() => setCalendar(1)}
-            selected={calendar.name === "CS009B"}
-          />
-          <Tag
-            title="CS 009C"
-            onClick={() => setCalendar(2)}
-            selected={calendar.name === "CS009C"}
-          />
-          <Tag
-            title="CS 010A"
-            onClick={() => setCalendar(3)}
-            selected={calendar.name === "CS010A"}
-          />
-          <Tag
-            title="CS 010B"
-            onClick={() => setCalendar(4)}
-            selected={calendar.name === "CS010B"}
-          />
-          <Tag
-            title="CS 010C"
-            onClick={() => setCalendar(5)}
-            selected={calendar.name === "CS010C"}
-          />
-          <Tag
-            title="CS 061"
-            onClick={() => setCalendar(6)}
-            selected={calendar.name === "CS061"}
-          />
-          <Tag
-            title="CS 100"
-            onClick={() => setCalendar(7)}
-            selected={calendar.name === "CS100"}
-          />
+          {courseList.map((course) => (
+            <Tag
+              key={course}
+              title={course}
+              onClick={() => setCurrentCourse(course)}
+              selected={currentCourse === course}
+            />
+          ))}
         </div>
       </div>
     </div>
