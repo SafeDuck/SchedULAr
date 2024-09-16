@@ -86,8 +86,8 @@ const HoursOverview = () => {
   };
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <h2 className="text-2xl font-semibold mb-4">Total Hours Overview</h2>
+    <div className="w-2/3 flex flex-col justify-center items-center">
+      <div className="text-2xl font-semibold mb-4">Total Hours Overview</div>
       <table className="table-auto border-collapse border border-gray-400 w-3/4">
         <thead>
           <tr>
