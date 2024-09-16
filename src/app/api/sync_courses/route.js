@@ -39,7 +39,7 @@ export async function POST(req) {
     const courseRef = doc(db, "settings", "courses");
     const courseSnap = await getDoc(courseRef);
     const courses = courseSnap.data().courses;
-
+    
     for (const course of courses) {
       const session_res = await fetch(
         "https://registrationssb.ucr.edu/StudentRegistrationSsb/ssb/term/search?mode=search",
@@ -134,7 +134,7 @@ export async function POST(req) {
 
       // store term in /settings/terms list
       const termsRef = doc(db, "settings", "terms");
-      setDoc(termsRef, { terms: arrayUnion(term) });
+      setDoc(termsRef, { terms: arrayUnion(term) }, { merge: true });
     }
 
     return new Response("Success", {

@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import CalendarEvents from "@/components/calendar/Events";
-import Profile from "@/components/Profile";
 import HoursOverview from "@/components/admin/HoursOverview";
 
 const Page = () => {
