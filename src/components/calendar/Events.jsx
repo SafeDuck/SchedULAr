@@ -28,7 +28,7 @@ const convertToDate = (day, time) => {
 
 const CalendarEvents = () => {
   const session = useSession();
-  const userId = session.data.user.id;
+  const userEmail = session.data.user.email;
 
   const { data: courseList } = useQuery({
     queryKey: ["courses"],
@@ -67,9 +67,9 @@ const CalendarEvents = () => {
           [currentCourse]: sections.map((section) => ({
             id: section.id,
             section: section.section,
-            preferred: section.preferred?.includes(userId) || false,
-            available: section.available?.includes(userId) || false,
-            unavailable: section.unavailable?.includes(userId) || false,
+            preferred: section.preferred?.includes(userEmail) || false,
+            available: section.available?.includes(userEmail) || false,
+            unavailable: section.unavailable?.includes(userEmail) || false,
           })),
         });
       }
