@@ -1,6 +1,5 @@
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
-import { signIn } from "next-auth/react";
 import { db } from "@/utils/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 
@@ -55,15 +54,8 @@ const authOptions = {
     async session({ session, token }) {
       console.log("session function called");
 
-      // Fetch latest user data from Firestore
-      const userRef = doc(db, "users", token.email);
-      const userSnap = await getDoc(userRef);
-
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        session.user.ula = userData.ula || 0; // Fetch ula from Firestore
-        session.user.admin = userData.admin || 0; // Fetch admin from Firestore
-      }
+      session.user.ula = token.ula;
+      session.user.admin = token.admin;
 
       return session;
     },
@@ -72,7 +64,7 @@ const authOptions = {
       console.log("jwt function called");
       if (user) {
         // Fetch user ula and admin fields from Firestore
-        const userRef = doc(db, "users", user.id || user.sub);
+        const userRef = doc(db, "users", user.email);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {

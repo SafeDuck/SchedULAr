@@ -2,19 +2,18 @@
 
 import { useSession } from "next-auth/react";
 import CalendarEvents from "@/components/calendar/Events";
-import Profile from "@/components/Profile";
 import HoursForm from "@/components/HoursForm";
 
 const Page = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
-  if (!session) {
+  if (status === "loading") {
     return <p>Loading...</p>;
   }
 
-  const { ula, admin } = session.user;
+  const user = session?.user;
 
-  if (ula !== 1 && admin !== 1) {
+  if (!user && !user.ula && !user.admin) {
     return (
       <div className="w-full flex flex-col justify-center items-center">
         <p className="text-red-500 text-2xl">
@@ -26,7 +25,6 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <Profile />
       <CalendarEvents />
       <HoursForm />
     </div>
