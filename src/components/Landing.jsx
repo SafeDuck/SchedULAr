@@ -7,7 +7,7 @@ const Landing = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <p className="text-3xl font-semibold font-mono">SchedULAr</p>
+      <h1 className="text-3xl font-semibold font-mono">SchedULAr</h1>
       {session ? (
         <>
           <Link

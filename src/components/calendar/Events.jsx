@@ -7,7 +7,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
 import CustomToolbar from "./Toolbar";
 import { useSession } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
 
