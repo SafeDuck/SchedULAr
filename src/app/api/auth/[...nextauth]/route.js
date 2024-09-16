@@ -33,13 +33,17 @@ const authOptions = {
         // const userSnap = await getDoc(userRef);
 
         // Create a new user document in Firestore
-        await updateDoc(userRef, {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          createdAt: new Date().toISOString(),
-        }, { merge: true });
+        await updateDoc(
+          userRef,
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            createdAt: new Date().toISOString(),
+          },
+          { merge: true },
+        );
 
         return true;
       } catch (error) {
@@ -52,7 +56,7 @@ const authOptions = {
       console.log("session function called");
 
       // Fetch latest user data from Firestore
-      const userRef = doc(db, "users", token.email); // Use `token.sub` for user ID
+      const userRef = doc(db, "users", token.email);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
