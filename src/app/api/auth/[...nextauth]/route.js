@@ -2,7 +2,7 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import { signIn } from "next-auth/react";
 import { db } from "@/utils/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -28,20 +28,22 @@ const authOptions = {
         }
 
         // Get user document reference
-        const userRef = doc(db, "users", user.id);
+        const userRef = doc(db, "users", user.email);
         // Check if user already exists in Firestore
         // const userSnap = await getDoc(userRef);
 
         // Create a new user document in Firestore
-        await setDoc(userRef, {
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          createdAt: new Date().toISOString(),
-          provider: account.provider,
-          ula: 0,
-          admin: 0,
-        });
+        await updateDoc(
+          userRef,
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            createdAt: new Date().toISOString(),
+          },
+          { merge: true },
+        );
 
         return true;
       } catch (error) {
@@ -54,14 +56,13 @@ const authOptions = {
       console.log("session function called");
 
       // Fetch latest user data from Firestore
-      const userRef = doc(db, "users", token.sub); // Use `token.sub` for user ID
+      const userRef = doc(db, "users", token.email);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
         const userData = userSnap.data();
         session.user.ula = userData.ula || 0; // Fetch ula from Firestore
         session.user.admin = userData.admin || 0; // Fetch admin from Firestore
-        session.user.id = token.sub;
       }
 
       return session;

@@ -40,7 +40,7 @@ const CustomToolbar = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userSelection),
-    })
+    });
 
     if (req.ok) {
       toast.success("Selection submitted");
