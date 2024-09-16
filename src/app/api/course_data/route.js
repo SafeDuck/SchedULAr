@@ -36,7 +36,7 @@ export async function POST(req) {
     const course_data = await req.json();
 
     const session = await getServerSession(authOptions);
-    const user_id = session.user.id;
+    const user_email = session.user.email;
 
     const termRef = doc(db, "settings", "selected_term");
     const termSnap = await getDoc(termRef);
@@ -50,27 +50,27 @@ export async function POST(req) {
 
         if (section.preferred) {
           await updateDoc(sectionRef, {
-            preferred: arrayUnion(user_id),
-            available: arrayRemove(user_id),
-            unavailable: arrayRemove(user_id),
+            preferred: arrayUnion(user_email),
+            available: arrayRemove(user_email),
+            unavailable: arrayRemove(user_email),
           });
         } else if (section.available) {
           await updateDoc(sectionRef, {
-            preferred: arrayRemove(user_id),
-            available: arrayUnion(user_id),
-            unavailable: arrayRemove(user_id),
+            preferred: arrayRemove(user_email),
+            available: arrayUnion(user_email),
+            unavailable: arrayRemove(user_email),
           });
         } else if (section.unavailable) {
           await updateDoc(sectionRef, {
-            preferred: arrayRemove(user_id),
-            available: arrayRemove(user_id),
-            unavailable: arrayUnion(user_id),
+            preferred: arrayRemove(user_email),
+            available: arrayRemove(user_email),
+            unavailable: arrayUnion(user_email),
           });
         } else {
           await updateDoc(sectionRef, {
-            preferred: arrayRemove(user_id),
-            available: arrayRemove(user_id),
-            unavailable: arrayRemove(user_id),
+            preferred: arrayRemove(user_email),
+            available: arrayRemove(user_email),
+            unavailable: arrayRemove(user_email),
           });
         }
       }
