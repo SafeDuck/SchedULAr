@@ -8,28 +8,17 @@ const CustomToolbar = ({
   courseList,
 }) => {
   const handleSubmit = async () => {
-    const courses = Object.keys(userSelection);
-
-    // move currentCourse to beginning of courses
-    const index = courses.indexOf(currentCourse);
-    if (index > -1) {
-      courses.splice(index, 1);
-    }
-    courses.unshift(currentCourse);
-
-    for (const course of courses) {
-      let selectionInCourse = false;
-      let unselectedInCourse = false;
-      for (const section of userSelection[course]) {
-        if (section.preferred || section.available || section.unavailable) {
-          selectionInCourse = true;
-        } else {
-          unselectedInCourse = true;
-        }
-        if (selectionInCourse && unselectedInCourse) {
-          toast.error(`Please finish filling out ${course}`);
-          return;
-        }
+    let selectionInCourse = false;
+    let unselectedInCourse = false;
+    for (const section of userSelection[currentCourse]) {
+      if (section.preferred || section.available || section.unavailable) {
+        selectionInCourse = true;
+      } else {
+        unselectedInCourse = true;
+      }
+      if (selectionInCourse && unselectedInCourse) {
+        toast.error(`Please finish filling`);
+        return;
       }
     }
 
@@ -39,7 +28,7 @@ const CustomToolbar = ({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userSelection),
+      body: JSON.stringify({ [currentCourse]: userSelection[currentCourse] }),
     });
 
     if (req.ok) {
