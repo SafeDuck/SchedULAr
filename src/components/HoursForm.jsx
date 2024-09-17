@@ -20,7 +20,6 @@ const HoursForm = () => {
       return;
     }
 
-
     // Validate hours (must be a number, integer or decimal)
     if (isNaN(hours) || Number(hours) <= 0) {
       toast.error("Please enter a valid number for hours.");
@@ -54,7 +53,7 @@ const HoursForm = () => {
 
   return (
     <form
-      className="w-1/3 flex flex-row gap-5 my-[5%] justify-center items-center"
+      className="w-1/3 flex flex-row gap-5 my-[6vh] justify-center items-center"
       onSubmit={(e) => e.preventDefault()}
     >
       <div className="flex flex-row gap-5 justify-end items-center">
@@ -67,7 +66,7 @@ const HoursForm = () => {
           ref={hoursRef}
         />
       </div>
-      <div className="flex flex-row gap-5 w-1/2 justify-end items-center">
+      <div className="flex flex-row gap-5 justify-end items-center">
         <label htmlFor="sid">SID:</label>
         <input
           type="text"
