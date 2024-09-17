@@ -62,32 +62,32 @@ const HoursForm = () => {
 
   return (
     <form
-      className="w-1/3 flex flex-col gap-5 my-[5%]"
+      className="w-1/3 flex flex-row gap-5 my-[5%] justify-center items-center"
       onSubmit={(e) => e.preventDefault()}
     >
-      <div className="flex flex-row gap-5 items-center">
-        <label htmlFor="hours">Total Hours:</label>
+      <div className="flex flex-row gap-5 w-1/2 justify-end items-center">
+        <label htmlFor="hours">Office Hours:</label>
         <input
           type="text"
           id="hours"
           name="hours"
-          className="border shadow rounded w-full p-2"
+          className="border shadow rounded p-2"
           ref={hoursRef}
         />
       </div>
-      <div className="flex flex-row gap-5 items-center">
+      <div className="flex flex-row gap-5 w-1/2 justify-end items-center">
         <label htmlFor="sid">SID:</label>
         <input
           type="text"
           id="sid"
           name="sid"
-          className="border shadow rounded w-full p-2"
+          className="border shadow rounded  p-2"
           ref={sidRef}
         />
       </div>
       <button
         type="button"
-        className="bg-blue-200 rounded-lg p-3 w-1/4 hover:bg-blue-300 hover:cursor-pointer mx-auto"
+        className="bg-blue-300 rounded-lg px-2 py-2 w-1/4 hover:bg-blue-400 hover:cursor-pointer"
         onClick={handleSubmit}
       >
         Submit

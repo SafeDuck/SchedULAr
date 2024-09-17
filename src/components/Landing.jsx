@@ -7,27 +7,9 @@ const Landing = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <h1 className="text-3xl font-semibold font-mono">SchedULAr</h1>
+      <p className="text-3xl font-semibold font-mono">UCR-ULA-Scheduler</p>
       {session ? (
         <>
-          <Link
-            href={"calendar"}
-            className="bg-blue-300 rounded-xl p-3 hover:bg-blue-400 text-xl"
-          >
-            Lab Hours
-          </Link>
-          <Link
-            href={"office-hours"}
-            className="bg-blue-300 rounded-xl p-3 hover:bg-blue-400 text-xl"
-          >
-            Office Hours
-          </Link>
-          <Link
-            href={"admin"}
-            className="bg-blue-300 rounded-xl p-3 hover:bg-blue-400 text-xl"
-          >
-            Admin
-          </Link>
           <div className="mt-4">
             <div className="flex flex-col justify-center items-center">
               <p className="text-xl">Hello, {session.user.name}!</p>
@@ -42,7 +24,7 @@ const Landing = () => {
         </>
       ) : (
         <button
-          className="bg-green-300 rounded-xl p-2 hover:bg-green-400"
+          className="bg-green-300 rounded-xl text-lg p-2 hover:bg-green-400"
           onClick={() => signIn("google")}
         >
           Sign In

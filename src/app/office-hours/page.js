@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import CalendarEvents from "@/components/calendar/Events";
 import HoursForm from "@/components/HoursForm";
 
 const Page = () => {
@@ -22,10 +21,9 @@ const Page = () => {
       </div>
     );
   }
-
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <CalendarEvents />
+    <div className="w-full flex justify-center items-center ">
+      <HoursForm />
     </div>
   );
 };
