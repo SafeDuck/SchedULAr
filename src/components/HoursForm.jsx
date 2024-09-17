@@ -2,8 +2,6 @@
 
 import { useRef } from "react";
 import { toast } from "react-hot-toast";
-import { db } from "@/utils/firebase";
-import { doc, setDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 
 const HoursForm = () => {
@@ -22,7 +20,6 @@ const HoursForm = () => {
       return;
     }
 
-    const user = session.user;
 
     // Validate hours (must be a number, integer or decimal)
     if (isNaN(hours) || Number(hours) <= 0) {
@@ -41,19 +38,14 @@ const HoursForm = () => {
     const totalHours = {
       hours: Number(hours),
       sid,
-      userName: user.name,
-      userEmail: user.email,
     };
 
     try {
-      // Use setDoc to update the document if it exists, or create a new one based on the user email
-      const userDocRef = doc(db, "total_hours", user.email); // Using the user's email as the document ID
-      await setDoc(userDocRef, totalHours, { merge: true }); // merge: true to only update changed fields
-      toast.success("Total hours submitted successfully!");
-
-      // Clear form fields after successful submission
-      hoursRef.current.value = "";
-      sidRef.current.value = "";
+      await fetch("/api/total_hours", {
+        method: "PUT",
+        "body": JSON.stringify(totalHours),
+      })
+      toast.success("Submitted successfully!");
     } catch (error) {
       console.error("Error submitting total hours:", error);
       toast.error("Failed to submit total hours.");
@@ -65,8 +57,8 @@ const HoursForm = () => {
       className="w-1/3 flex flex-row gap-5 my-[5%] justify-center items-center"
       onSubmit={(e) => e.preventDefault()}
     >
-      <div className="flex flex-row gap-5 w-1/2 justify-end items-center">
-        <label htmlFor="hours">Office Hours:</label>
+      <div className="flex flex-row gap-5 justify-end items-center">
+        <label htmlFor="hours">Total Hours:</label>
         <input
           type="text"
           id="hours"

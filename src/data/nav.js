@@ -4,8 +4,8 @@ export const items = [
     link: "/calendar",
   },
   {
-    name: "Office Hours",
-    link: "/office-hours",
+    name: "Total Hours",
+    link: "/total_hours",
   },
   {
     name: "Admin",
