@@ -12,7 +12,7 @@ const Page = () => {
 
   const user = session?.user;
 
-  if (!user && !user?.ula && !user?.admin) {
+  if (!user || (!user.ula && !user.admin)) {
     return (
       <div className="w-full flex flex-col justify-center items-center">
         <p className="text-red-500 text-2xl">

@@ -37,7 +37,7 @@ const CalendarEvents = () => {
       const courseList = await response.json();
       return courseList.sort((a, b) => a.localeCompare(b));
     },
-    initialData: [],
+    placeholderData: [],
   });
 
   const [currentCourse, setCurrentCourse] = useState("CS009A");
@@ -77,14 +77,14 @@ const CalendarEvents = () => {
       return sections;
     },
     enabled: !!courseList,
-    initialData: [],
+    placeholderData: [],
   });
 
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (eventId, iconType) => {
     setEventStates((prevStates) => ({
       ...prevStates,
-      [currentCourse]: prevStates[currentCourse].map((event) => {
+      [currentCourse]: prevStates[currentCourse]?.map((event) => {
         if (event.id === eventId) {
           // Toggle the state of the clicked icon
           return {
@@ -101,7 +101,7 @@ const CalendarEvents = () => {
   };
 
   return (
-    <section className="w-full flex justify-center items-center flex-col mt-[6vh]">
+    <section className="w-full flex justify-center items-center flex-col my-[6vh]">
       <div className="w-11/12 flex justify-center items-center">
         <div className="w-full h-[90vh] relative">
           <Calendar
@@ -118,7 +118,7 @@ const CalendarEvents = () => {
               event: (props) => (
                 <CustomEvent
                   {...props}
-                  eventState={eventStates[currentCourse].find(
+                  eventState={eventStates[currentCourse]?.find(
                     (state) => state.id === props.event.id,
                   )}
                   onEventClick={handleEventClick}
