@@ -1,9 +1,10 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Navbar from "@/components/Navbar";
+import Navigation from "@/components/Navigation";
 import Session from "@/components/Session";
 import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 import { ReactQueryClientProvider } from "@/utils/react-query";
 
 const geistSans = localFont({
@@ -23,7 +24,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   return (
     <ReactQueryClientProvider>
@@ -31,7 +32,7 @@ export default async function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
         >
-          <Navbar />
+          <Navigation />
           <div className="w-full flex flex-col items-center justify-center">
             <Session session={session}>
               <Toaster />

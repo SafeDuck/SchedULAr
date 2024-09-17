@@ -8,13 +8,9 @@ import AddUser from "@/components/admin/AddUser";
 const Page = () => {
   const { data: session } = useSession();
 
-  if (!session) {
-    return <p>Loading...</p>; // Show loading state while session is being fetched
-  }
+  const user = session?.user;
 
-  const { admin } = session.user;
-
-  if (admin !== 1) {
+  if (user?.admin !== 1) {
     return (
       <div className="w-full flex flex-col justify-center items-center">
         <p className="text-red-500 text-2xl">
