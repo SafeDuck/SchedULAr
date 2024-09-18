@@ -1,4 +1,6 @@
 import { db } from "@/utils/firebase.js";
+import { NextResponse } from "next/server";
+
 import {
   collection,
   getDocs,
@@ -81,5 +83,34 @@ export async function POST(req) {
     return new Response(e.message, {
       status: 500,
     });
+  }
+}
+
+export async function PUT(req) {
+  const res = NextResponse;
+  try {
+    const { ula, course, section } = await req.json();
+
+    const termRef = doc(db, "settings", "selected_term");
+    const termSnap = await getDoc(termRef);
+    const { selected_term: term } = termSnap.data();
+
+    const courseRef = collection(db, term, "courses", course);
+    const sectionRef = doc(courseRef, section);
+    await updateDoc(
+      sectionRef,
+      {
+        ula: ula,
+      },
+      { merge: true },
+    );
+    return res.json({ message: "OK" });
+  } catch (e) {
+    return res.json(
+      { message: e.message },
+      {
+        status: 500,
+      },
+    );
   }
 }

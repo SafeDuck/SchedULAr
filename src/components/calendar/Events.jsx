@@ -31,7 +31,6 @@ const CalendarEvents = () => {
   const [modalEvent, setModalEvent] = useState(null);
   const session = useSession();
   const userEmail = session.data.user.email;
-
   const { data: courseList } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -61,6 +60,8 @@ const CalendarEvents = () => {
         preferred: section.preferred,
         available: section.available,
         unavailable: section.unavailable,
+        location: section.location,
+        ula: section.ula,
       }));
 
       if (!(currentCourse in eventStates)) {
@@ -133,6 +134,7 @@ const CalendarEvents = () => {
                   setCurrentCourse={setCurrentCourse}
                   userSelection={eventStates}
                   courseList={courseList}
+                  setModalEvent={setModalEvent}
                 />
               ),
             }}
@@ -145,7 +147,13 @@ const CalendarEvents = () => {
             }}
           />
         </div>
-        {modalEvent && <Modal event={modalEvent} setEvent={setModalEvent} />}
+        {modalEvent && (
+          <Modal
+            event={modalEvent}
+            setEvent={setModalEvent}
+            course={currentCourse}
+          />
+        )}
       </div>
     </section>
   );

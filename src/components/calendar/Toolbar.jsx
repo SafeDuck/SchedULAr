@@ -6,8 +6,10 @@ const CustomToolbar = ({
   setCurrentCourse,
   userSelection,
   courseList,
+  setModalEvent,
 }) => {
   const handleSubmit = async () => {
+    setModalEvent(null);
     let selectionInCourse = false;
     let unselectedInCourse = false;
     for (const section of userSelection[currentCourse]) {
@@ -52,7 +54,10 @@ const CustomToolbar = ({
             <Tag
               key={course}
               title={course}
-              onClick={() => setCurrentCourse(course)}
+              onClick={() => {
+                setCurrentCourse(course);
+                setModalEvent(null);
+              }}
               selected={currentCourse === course}
             />
           ))}

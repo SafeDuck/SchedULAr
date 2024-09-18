@@ -4,34 +4,31 @@ import {
   LiaCheckSolid,
   LiaTimesSolid,
 } from "react-icons/lia";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/utils/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
-const fetchUsers = async (req) => {
-  const reqs = req.map((user) => {
-    console.log("p", user);
-    if (user.length > 0) {
-      return api({ url: `/api/users?users=${user}`, method: "GET" });
-    } else {
-      return Promise.resolve([]);
-    }
+const Modal = ({ event, setEvent, course }) => {
+  const session = useSession();
+  const [selected, setSelected] = useState({
+    group: null,
+    index: null,
+    name: null,
   });
-  const results = await Promise.all(reqs);
-  return results;
-};
+  const queryClient = useQueryClient();
 
-const Modal = ({ event, setEvent }) => {
-  const [selected, setSelected] = useState({ group: null, index: null });
-
-  const handleUserClick = (group, index) => {
-    console.log(selected);
-    // Toggle user selection: if the same user is clicked, deselect; otherwise, select the new one
-    if (selected.group === group && selected.index === index) {
-      setSelected({ group: null, index: null }); // Deselect if clicking the same user again
-    } else {
-      setSelected({ group, index }); // Select new user
-    }
+  const fetchUsers = async (req) => {
+    const reqs = req.map((user) => {
+      if (user.length > 0) {
+        return api({ url: `/api/users?users=${user}`, method: "GET" });
+      } else {
+        return Promise.resolve([]);
+      }
+    });
+    const results = await Promise.all(reqs);
+    return results;
   };
 
   const {
@@ -44,6 +41,59 @@ const Modal = ({ event, setEvent }) => {
       fetchUsers([event.preferred, event.available, event.unavailable]),
     enabled: !!event,
   });
+  useEffect(() => {
+    if (users && event.ula) {
+      let found = false;
+      users[0].forEach((user, index) => {
+        if (user.name === event.ula) {
+          setSelected({ group: "preferred", index, name: user.name });
+          found = true;
+        }
+      });
+      if (!found) {
+        users[1].forEach((user, index) => {
+          if (user.name === event.ula) {
+            setSelected({ group: "available", index, name: user.name });
+            found = true;
+          }
+        });
+      }
+      if (!found) {
+        users[2].forEach((user, index) => {
+          if (user.name === event.ula) {
+            setSelected({ group: "unavailable", index, name: user.name });
+          }
+        });
+      }
+    }
+  }, [users, event.ula]);
+
+  const handleUserClick = async (group, index, name) => {
+    try {
+      if (!session.data.user.admin) {
+        // TODO: Fix Bug session bug
+        toast.error("Admin Action Only");
+        return;
+      }
+      if (name === selected.name) {
+        name = null;
+      }
+      await api({
+        url: "/api/course_data",
+        method: "PUT",
+        body: { ula: name, section: event.section, course: course },
+      });
+
+      if (selected.group === group && selected.index === index) {
+        setSelected({ group: null, index: null, name: null });
+      } else {
+        setSelected({ group, index, name });
+      }
+      queryClient.invalidateQueries(["sections", course]);
+    } catch (err) {
+      toast.error("Error!");
+    }
+  };
 
   return (
     <div className=" bg-blue-400 font-playfair  bottom-2/3 fixed -translate-y-3 md:min-w-[30vw] z-10 drop-shadow-lg">
@@ -61,11 +111,11 @@ const Modal = ({ event, setEvent }) => {
                 " m-0 py-2 md:py-3 px-3 md:px-4 text-lg md:text-2xl text-white"
               }
             >
-              {event.title}
+              {course} - {event.title}
             </p>
 
             <div className="absolute right-2 md:py-3 px-12 md:px-12 text-lg text-white">
-              Location
+              {event.location}
             </div>
 
             <AiOutlinePlus
@@ -78,11 +128,13 @@ const Modal = ({ event, setEvent }) => {
               <div className="flex flex-row gap-4">
                 <LiaCheckDoubleSolid className="text-3xl bg-[#225b8c] rounded-lg text-green-300 p-0.5" />
                 <div className="flex flex-row gap-2">
-                  {users[0].map((user, index) => (
+                  {users[0]?.map((user, index) => (
                     <div
                       key={index}
-                      className={`${selected.group === "preferred" && selected.index === index ? "bg-[#225b8c] px-1 rounded-lg" : ""} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
-                      onClick={() => handleUserClick("preferred", index)}
+                      className={`${selected.group === "preferred" && selected.index === index ? "bg-[#225B8C] px-1 rounded-lg" : ""} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
+                      onClick={() =>
+                        handleUserClick("preferred", index, user.name)
+                      }
                     >
                       {user.name}
                     </div>
@@ -92,11 +144,13 @@ const Modal = ({ event, setEvent }) => {
               <div className="flex flex-row gap-4">
                 <LiaCheckSolid className="text-3xl bg-[#225b8c] rounded-lg text-yellow-300 p-0.5" />
                 <div className="flex flex-row gap-2">
-                  {users[1].map((user, index) => (
+                  {users[1]?.map((user, index) => (
                     <div
                       key={index}
-                      className={`${selected.group === "available" && selected.index === index ? "bg-[#225b8c] px-1 rounded-lg" : ""}} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
-                      onClick={() => handleUserClick("available", index)}
+                      className={`${selected.group === "available" && selected.index === index ? "bg-[#225B8C] px-1 rounded-lg" : ""} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
+                      onClick={() =>
+                        handleUserClick("available", index, user.name)
+                      }
                     >
                       {user.name}
                     </div>
@@ -106,11 +160,13 @@ const Modal = ({ event, setEvent }) => {
               <div className="flex flex-row gap-4">
                 <LiaTimesSolid className="text-3xl bg-[#225b8c] rounded-lg text-red-300 p-0.5" />
                 <div className="flex flex-row gap-2">
-                  {users[2].map((user, index) => (
+                  {users[2]?.map((user, index) => (
                     <div
                       key={index}
-                      className={`${selected.group === "unavailable" && selected.index === index ? "bg-[#225b8c] px-1 rounded-lg" : ""} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
-                      onClick={() => handleUserClick("unavailable", index)}
+                      className={`${selected.group === "unavailable" && selected.index === index ? "bg-[#225B8C] px-1 rounded-lg" : ""} flex flex-row gap-1 hover:cursor-pointer hover:underline`}
+                      onClick={() =>
+                        handleUserClick("unavailable", index, user.name)
+                      }
                     >
                       {user.name}
                     </div>
