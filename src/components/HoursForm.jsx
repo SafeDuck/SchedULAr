@@ -42,8 +42,8 @@ const HoursForm = () => {
     try {
       await fetch("/api/total_hours", {
         method: "PUT",
-        "body": JSON.stringify(totalHours),
-      })
+        body: JSON.stringify(totalHours),
+      });
       toast.success("Submitted successfully!");
     } catch (error) {
       console.error("Error submitting total hours:", error);
