@@ -4,8 +4,9 @@ import { getServerSession } from "next-auth";
 
 export async function PUT(req) {
   try {
-    const { hours, sid } = await req.json();
-    if (!hours || !sid || isNaN(hours) || !/^\d{9}$/.test(sid)) {
+    let { hours, sid } = await req.json();
+    hours = parseInt(hours);
+    if (!hours || !sid || isNaN(hours) || hours < 0 || !/^\d{9}$/.test(sid)) {
       return new Response("Bad request", {
         status: 400,
       });

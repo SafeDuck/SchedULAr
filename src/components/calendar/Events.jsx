@@ -69,6 +69,15 @@ const CalendarEvents = () => {
     placeholderData: [],
   });
 
+  const { data: officeHours } = useQuery({
+    queryKey: ["office_hours"],
+    queryFn: async () => {
+      const response = await fetch("/api/office_hours");
+      return response.json();
+    },
+    placeholderData: {},
+  });
+
   if (sections.length > 0 && !(currentCourse in eventStates)) {
     setEventStates({
       ...eventStates,
@@ -102,6 +111,7 @@ const CalendarEvents = () => {
       }),
     }));
   };
+
   return (
     <section className="w-full flex justify-center items-center flex-col my-[6vh]">
       <div className="w-11/12 flex justify-center items-center">
@@ -134,6 +144,7 @@ const CalendarEvents = () => {
                   userSelection={eventStates}
                   courseList={courseList}
                   setModalEvent={setModalEvent}
+                  defaultOfficeHours={officeHours[currentCourse] || 0}
                 />
               ),
             }}
