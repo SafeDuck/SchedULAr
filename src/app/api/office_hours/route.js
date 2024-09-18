@@ -49,7 +49,7 @@ export async function PUT(req) {
     let { course, hours } = await req.json();
     hours = parseInt(hours);
 
-    if (!course || !hours || isNaN(hours) || hours < 0) {
+    if (!course || isNaN(hours) || hours < 0) {
       return new Response("Bad request", {
         status: 400,
       });
