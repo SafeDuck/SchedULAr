@@ -14,26 +14,26 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
           <LiaCheckDoubleSolid
             className={`${
               eventState?.preferred
-                ? "bg-[#225b8c] rounded-lg text-green-300"
+                ? "bg-[#225B8C] rounded-lg text-green-300"
                 : "text-white"
             } ${!eventState?.preferred ? "hover:text-green-300" : ""}  p-0.5`}
-            onClick={() => onEventClick(event.id, "preferred")}
+            onClick={(e) => onEventClick(e, event.id, "preferred")}
           />
           <LiaCheckSolid
             className={`${
               eventState?.available
-                ? "bg-[#225b8c] rounded-lg text-yellow-300"
+                ? "bg-[#225B8C] rounded-lg text-yellow-300"
                 : "text-white"
             } ${!eventState?.available ? "hover:text-yellow-300" : ""} p-0.5`}
-            onClick={() => onEventClick(event.id, "available")}
+            onClick={(e) => onEventClick(e, event.id, "available")}
           />
           <LiaTimesSolid
             className={`${
               eventState?.unavailable
-                ? "bg-[#225b8c] rounded-lg text-red-300"
+                ? "bg-[#225B8C] rounded-lg text-red-300"
                 : "text-white"
             } ${!eventState?.unavailable ? "hover:text-red-300" : ""}  p-0.5`}
-            onClick={() => onEventClick(event.id, "unavailable")}
+            onClick={(e) => onEventClick(e, event.id, "unavailable")}
           />
         </div>
       </div>
