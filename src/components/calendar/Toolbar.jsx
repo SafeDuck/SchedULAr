@@ -19,7 +19,7 @@ const CustomToolbar = ({
         unselectedInCourse = true;
       }
       if (selectionInCourse && unselectedInCourse) {
-        toast.error(`Please finish filling`);
+        toast.error("Please select a choice for all sections");
         return;
       }
     }
@@ -34,7 +34,7 @@ const CustomToolbar = ({
     });
 
     if (req.ok) {
-      toast.success("Selection submitted");
+      toast.success("Selection submitted for " + currentCourse);
     } else {
       toast.error("Failed to submit selection");
     }
@@ -43,14 +43,8 @@ const CustomToolbar = ({
   return (
     <div className="flex justify-center items-center w-full my-3">
       <div className="w-full flex justify-between items-center flex-col md:flex-row">
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded m-2 disabled"
-        >
-          Submit
-        </button>
-        <div className="flex w-full justify-center md:justify-end flex-wrap md:flex-nowrap">
-          {courseList.map((course) => (
+        <div className="flex justify-center md:justify-end flex-wrap md:flex-nowrap">
+          {courseList.map((course, i) => (
             <Tag
               key={course}
               title={course}
@@ -59,9 +53,16 @@ const CustomToolbar = ({
                 setModalEvent(null);
               }}
               selected={currentCourse === course}
+              first={i === 0}
             />
           ))}
         </div>
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded ml-2 disabled"
+        >
+          Submit
+        </button>
       </div>
     </div>
   );

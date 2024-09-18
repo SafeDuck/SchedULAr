@@ -88,11 +88,16 @@ export async function POST(req) {
               let endTime = roundUpToNearestHalfHour(
                 insertColon(meeting.meetingTime.endTime),
               );
+              let location =
+                meeting.meetingTime.room === "ONLINE"
+                  ? "Online"
+                  : `${meeting.meetingTime.building} ${meeting.meetingTime.room}`;
 
               return {
                 id: section.id,
                 section: section.sequenceNumber,
-                day,
+                location: location,
+                day: day,
                 begin_time: beginTime,
                 end_time: endTime,
                 length: intervalLength(beginTime, endTime),

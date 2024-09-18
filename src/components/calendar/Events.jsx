@@ -64,24 +64,23 @@ const CalendarEvents = () => {
         ula: section.ula,
       }));
 
-      if (!(currentCourse in eventStates)) {
-        setEventStates({
-          ...eventStates,
-          [currentCourse]: sections.map((section) => ({
-            id: section.id,
-            section: section.section,
-            preferred: section.preferred?.includes(userEmail) || false,
-            available: section.available?.includes(userEmail) || false,
-            unavailable: section.unavailable?.includes(userEmail) || false,
-          })),
-        });
-      }
-
       return sections;
     },
-    enabled: !!courseList,
     placeholderData: [],
   });
+
+  if (sections.length > 0 && !(currentCourse in eventStates)) {
+    setEventStates({
+      ...eventStates,
+      [currentCourse]: sections.map((section) => ({
+        id: section.id,
+        section: section.section,
+        preferred: section.preferred?.includes(userEmail) || false,
+        available: section.available?.includes(userEmail) || false,
+        unavailable: section.unavailable?.includes(userEmail) || false,
+      })),
+    });
+  }
 
   // Update the state for the clicked icon while resetting others
   const handleEventClick = (e, eventId, iconType) => {
