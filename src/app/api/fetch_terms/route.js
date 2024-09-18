@@ -1,4 +1,8 @@
+import { authenticate } from "@/utils/authenticate";
 export async function GET() {
+  if (!(await authenticate("admin"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const req = await fetch(
       "https://registrationssb.ucr.edu/StudentRegistrationSsb/ssb/classSearch/getTerms?offset=1&max=10",

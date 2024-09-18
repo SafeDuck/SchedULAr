@@ -12,8 +12,11 @@ import {
 } from "firebase/firestore";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route.js";
 import { getServerSession } from "next-auth/next";
-
+import { authenticate } from "@/utils/authenticate";
 export async function GET(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const course = req.nextUrl.searchParams.get("course");
 
@@ -34,6 +37,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const course_data = await req.json();
 
@@ -88,6 +94,9 @@ export async function POST(req) {
 
 export async function PUT(req) {
   const res = NextResponse;
+  if (!(await authenticate("ula"))) {
+    return res.json("Unauthenticated");
+  }
   try {
     const { ula, course, section } = await req.json();
 
