@@ -1,5 +1,7 @@
 import Tag from "./Tag";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CustomToolbar = ({
   currentCourse,
@@ -7,7 +9,11 @@ const CustomToolbar = ({
   userSelection,
   courseList,
   setModalEvent,
+  defaultOfficeHours,
 }) => {
+  const [officeHours, setOfficeHours] = useState(defaultOfficeHours);
+  const queryClient = useQueryClient();
+
   const handleSubmit = async () => {
     setModalEvent(null);
     let selectionInCourse = false;
@@ -24,8 +30,14 @@ const CustomToolbar = ({
       }
     }
 
+    let parsedHours = parseInt(officeHours);
+    if (isNaN(parsedHours) || parsedHours < 0) {
+      toast.error("Please enter a valid number of hours");
+      return;
+    }
+
     // send selection to backend
-    const req = await fetch("/api/course_data", {
+    const courseDataReq = await fetch("/api/course_data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,10 +45,22 @@ const CustomToolbar = ({
       body: JSON.stringify({ [currentCourse]: userSelection[currentCourse] }),
     });
 
-    if (req.ok) {
-      toast.success("Selection submitted for " + currentCourse);
-    } else {
+    const officeHoursReq = await fetch("/api/office_hours", {
+      method: "PUT",
+      body: JSON.stringify({ course: currentCourse, hours: officeHours }),
+    });
+
+    if (!officeHoursReq.ok) {
+      toast.error("Failed to submit office hours");
+    } else if (!courseDataReq.ok) {
       toast.error("Failed to submit selection");
+    } else {
+      toast.success("Selection submitted for " + currentCourse);
+
+      queryClient.setQueryData(["office_hours"], (oldOfficeHours) => ({
+        ...oldOfficeHours,
+        [currentCourse]: officeHours,
+      }));
     }
   };
 
@@ -57,12 +81,23 @@ const CustomToolbar = ({
             />
           ))}
         </div>
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded ml-2 disabled"
-        >
-          Submit
-        </button>
+        <div className="flex gap-2 items-center">
+          <label className="text-md">Office Hours / Week:</label>
+          <input
+            type="text"
+            pattern="[0-9]"
+            className="border shadow rounded w-12 p-0.5"
+            maxLength={4}
+            defaultValue={officeHours}
+            onChange={(e) => setOfficeHours(e.target.value)}
+          ></input>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-200 hover:bg-blue-300 px-2 py-1 border-3 rounded ml-2 disabled"
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );
