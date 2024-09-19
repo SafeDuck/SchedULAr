@@ -1,8 +1,11 @@
 import { db } from "@/utils/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getServerSession } from "next-auth";
-
+import { authenticate } from "@/utils/authenticate";
 export async function GET(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated", { status: 403 });
+  }
   try {
     const summary = req.nextUrl.searchParams.get("summary");
     const termRef = doc(db, "settings", "selected_term");
@@ -45,6 +48,9 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated", { status: 403 });
+  }
   try {
     let { course, hours } = await req.json();
     hours = parseInt(hours);

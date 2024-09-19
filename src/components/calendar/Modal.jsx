@@ -38,9 +38,14 @@ const Modal = ({ event, setEvent, course }) => {
   } = useQuery({
     queryKey: ["usersModal", event?.id],
     queryFn: () =>
-      fetchUsers([event.preferred, event.available, event.unavailable]),
+      fetchUsers([
+        event?.preferred || [],
+        event?.available || [],
+        event?.unavailable || [],
+      ]),
     enabled: !!event,
   });
+
   useEffect(() => {
     if (users && event.ula) {
       let found = false;
@@ -89,7 +94,7 @@ const Modal = ({ event, setEvent, course }) => {
       } else {
         setSelected({ group, index, name });
       }
-      queryClient.invalidateQueries(["sections", course]);
+      queryClient.invalidateQueries(["usersModal", event.id]); // refetch modal data
     } catch (err) {
       toast.error("Error!");
     }
@@ -100,9 +105,19 @@ const Modal = ({ event, setEvent, course }) => {
       {isLoading ? (
         <div className="text-white text-2xl flex flex-row justify-center items-center my-[15%]">
           Loading...
+          <AiOutlinePlus
+            onClick={() => setEvent(null)}
+            className="text-white rotate-45 p-0 hover:scale-110 duration-300 hover:cursor-pointer text-3xl ml-10 mb-10"
+          />
         </div>
       ) : isError ? (
-        <div className="text-white text-2xl">Error!</div>
+        <div className="text-white text-2xl">
+          Error!
+          <AiOutlinePlus
+            onClick={() => setEvent(null)}
+            className="text-white rotate-45 p-0 hover:scale-110 duration-300 hover:cursor-pointer text-3xl m-3"
+          />
+        </div>
       ) : (
         <>
           <div className={`flex justify-between items-center`}>

@@ -1,8 +1,11 @@
 import { db } from "@/utils/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { getServerSession } from "next-auth";
-
+import { authenticate } from "@/utils/authenticate";
 export async function PUT(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     let { hours, sid } = await req.json();
     hours = parseInt(hours);

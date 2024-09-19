@@ -8,7 +8,7 @@ import {
   deleteDoc,
   arrayUnion,
 } from "firebase/firestore";
-
+import { authenticate } from "@/utils/authenticate";
 function insertColon(str) {
   return str.slice(0, 2) + ":" + str.slice(2);
 }
@@ -30,6 +30,9 @@ function intervalLength(beginTime, endTime) {
 }
 
 export async function POST(req) {
+  if (!(await authenticate("admin"))) {
+    return new Response("Unauthenticated", { status: 403 });
+  }
   try {
     const { term } = await req.json();
     if (!term) {

@@ -61,6 +61,7 @@ const CustomToolbar = ({
         ...oldOfficeHours,
         [currentCourse]: officeHours,
       }));
+      queryClient.invalidateQueries(["usersModal", currentCourse]);
     }
   };
 

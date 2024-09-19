@@ -8,7 +8,7 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
-
+import { authenticate } from "@/utils/authenticate";
 const userDataExtractor = (data) => ({
   name: data.name,
   email: data.email,
@@ -18,6 +18,9 @@ const userDataExtractor = (data) => ({
 });
 
 export async function GET(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated", { status: 403 });
+  }
   try {
     const users = req.nextUrl.searchParams.get("users");
     if (users) {
@@ -46,6 +49,9 @@ export async function GET(req) {
 
 export async function POST(req) {
   const res = NextResponse;
+  if (!(await authenticate("admin"))) {
+    return res.json("Unauthenticated", { status: 403 });
+  }
   const { email, ula, admin } = await req.json();
 
   try {
@@ -68,6 +74,9 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   const res = NextResponse;
+  if (!(await authenticate("admin"))) {
+    return res.json("Unauthenticated", { status: 403 });
+  }
   const { email } = await req.json();
 
   try {
@@ -87,6 +96,9 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
   const res = NextResponse;
+  if (!(await authenticate("admin"))) {
+    return res.json("Unauthenticated", { status: 403 });
+  }
   const { email, ula, admin } = await req.json();
 
   try {
