@@ -3,8 +3,10 @@
 import { useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const HoursForm = () => {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
 
   const hoursRef = useRef(null);
@@ -39,16 +41,16 @@ const HoursForm = () => {
       sid,
     };
 
-    try {
-      await fetch("/api/total_hours", {
-        method: "PUT",
-        body: JSON.stringify(totalHours),
-      });
-      toast.success("Submitted successfully!");
-    } catch (error) {
-      console.error("Error submitting total hours:", error);
+    const req = await fetch("/api/total_hours", {
+      method: "PUT",
+      body: JSON.stringify(totalHours),
+    });
+    if (!req.ok) {
       toast.error("Failed to submit total hours.");
+      return;
     }
+    toast.success("Submitted successfully!");
+    queryClient.invalidateQueries(["total_hours"]);
   };
 
   return (

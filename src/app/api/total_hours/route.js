@@ -44,7 +44,7 @@ export async function PUT(req) {
   }
   try {
     let { hours, sid } = await req.json();
-    hours = parseInt(hours);
+    hours = parseFloat(hours);
     if (!sid || isNaN(hours) || hours < 0 || !/^\d{9}$/.test(sid)) {
       return new Response("Bad request", {
         status: 400,
@@ -59,7 +59,7 @@ export async function PUT(req) {
     const { selected_term: term } = selectedTermSnap.data();
 
     const totalHoursRef = doc(db, term, "total_hours");
-    setDoc(
+    await setDoc(
       totalHoursRef,
       {
         [user_email]: {

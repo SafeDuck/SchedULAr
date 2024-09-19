@@ -53,7 +53,7 @@ export async function PUT(req) {
   }
   try {
     let { course, hours } = await req.json();
-    hours = parseInt(hours);
+    hours = parseFloat(hours);
 
     if (!course || isNaN(hours) || hours < 0) {
       return new Response("Bad request", {
@@ -69,7 +69,7 @@ export async function PUT(req) {
     const { selected_term: term } = termSnap.data();
 
     const officeHoursRef = doc(db, term, "office_hours");
-    setDoc(
+    await setDoc(
       officeHoursRef,
       { [course]: { [user_email]: Number(hours) } },
       { merge: true },
