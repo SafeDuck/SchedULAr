@@ -31,7 +31,7 @@ function intervalLength(beginTime, endTime) {
 
 export async function POST(req) {
   if (!(await authenticate("admin"))) {
-    return new Response("Unauthenticated");
+    return new Response("Unauthenticated", { status: 403 });
   }
   try {
     const { term } = await req.json();
