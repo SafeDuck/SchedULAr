@@ -32,11 +32,16 @@ export default async function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
         >
-          <Navigation />
+          <div className="hidden md:block">
+            <Navigation />
+          </div>
           <div className="w-full flex flex-col items-center justify-center">
             <Session session={session}>
               <Toaster />
-              {children}
+              <div className="w-full hidden md:block">{children}</div>
+              <div className="w-full md:hidden text-xl flex min-h-screen justify-center items-center text-center">
+                SchedULAr is better used on a laptop/desktop
+              </div>
             </Session>
           </div>
         </body>
