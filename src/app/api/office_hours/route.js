@@ -55,7 +55,7 @@ export async function PUT(req) {
     let { course, hours } = await req.json();
     hours = parseInt(hours);
 
-    if (!course || !hours || isNaN(hours) || hours < 0) {
+    if (!course || isNaN(hours) || hours < 0) {
       return new Response("Bad request", {
         status: 400,
       });
@@ -71,7 +71,7 @@ export async function PUT(req) {
     const officeHoursRef = doc(db, term, "office_hours");
     setDoc(
       officeHoursRef,
-      { [course]: { [user_email]: hours } },
+      { [course]: { [user_email]: Number(hours) } },
       { merge: true },
     );
 

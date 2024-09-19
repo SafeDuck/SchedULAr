@@ -9,7 +9,7 @@ export async function PUT(req) {
   try {
     let { hours, sid } = await req.json();
     hours = parseInt(hours);
-    if (!hours || !sid || isNaN(hours) || hours < 0 || !/^\d{9}$/.test(sid)) {
+    if (!sid || isNaN(hours) || hours < 0 || !/^\d{9}$/.test(sid)) {
       return new Response("Bad request", {
         status: 400,
       });
@@ -27,7 +27,7 @@ export async function PUT(req) {
       totalHoursRef,
       {
         [user_email]: {
-          hours,
+          hours: Number(hours),
           sid,
         },
       },
