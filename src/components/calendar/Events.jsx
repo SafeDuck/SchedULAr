@@ -6,8 +6,9 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
 import CustomToolbar from "./Toolbar";
+import Modal from "./Modal.jsx";
 import { useSession } from "next-auth/react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const mLocalizer = momentLocalizer(moment);
 
@@ -27,9 +28,9 @@ const convertToDate = (day, time) => {
 };
 
 const CalendarEvents = () => {
+  const [modalEvent, setModalEvent] = useState(null);
   const session = useSession();
   const userEmail = session.data.user.email;
-
   const { data: courseList } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -59,29 +60,40 @@ const CalendarEvents = () => {
         preferred: section.preferred,
         available: section.available,
         unavailable: section.unavailable,
+        location: section.location,
+        ula: section.ula,
       }));
-
-      if (!(currentCourse in eventStates)) {
-        setEventStates({
-          ...eventStates,
-          [currentCourse]: sections.map((section) => ({
-            id: section.id,
-            section: section.section,
-            preferred: section.preferred?.includes(userEmail) || false,
-            available: section.available?.includes(userEmail) || false,
-            unavailable: section.unavailable?.includes(userEmail) || false,
-          })),
-        });
-      }
 
       return sections;
     },
-    enabled: !!courseList,
     placeholderData: [],
   });
 
+  const { data: officeHours } = useQuery({
+    queryKey: ["office_hours"],
+    queryFn: async () => {
+      const response = await fetch("/api/office_hours");
+      return response.json();
+    },
+    placeholderData: {},
+  });
+
+  if (sections.length > 0 && !(currentCourse in eventStates)) {
+    setEventStates({
+      ...eventStates,
+      [currentCourse]: sections.map((section) => ({
+        id: section.id,
+        section: section.section,
+        preferred: section.preferred?.includes(userEmail) || false,
+        available: section.available?.includes(userEmail) || false,
+        unavailable: section.unavailable?.includes(userEmail) || false,
+      })),
+    });
+  }
+
   // Update the state for the clicked icon while resetting others
-  const handleEventClick = (eventId, iconType) => {
+  const handleEventClick = (e, eventId, iconType) => {
+    e.stopPropagation();
     setEventStates((prevStates) => ({
       ...prevStates,
       [currentCourse]: prevStates[currentCourse]?.map((event) => {
@@ -131,6 +143,8 @@ const CalendarEvents = () => {
                   setCurrentCourse={setCurrentCourse}
                   userSelection={eventStates}
                   courseList={courseList}
+                  setModalEvent={setModalEvent}
+                  defaultOfficeHours={officeHours[currentCourse] || 0}
                 />
               ),
             }}
@@ -138,8 +152,18 @@ const CalendarEvents = () => {
               dayFormat: (date, culture, localizer) =>
                 localizer.format(date, "dddd", culture),
             }}
+            onSelectEvent={(event) => {
+              setModalEvent(event);
+            }}
           />
         </div>
+        {modalEvent && (
+          <Modal
+            event={modalEvent}
+            setEvent={setModalEvent}
+            course={currentCourse}
+          />
+        )}
       </div>
     </section>
   );

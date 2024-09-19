@@ -1,4 +1,6 @@
 import { db } from "@/utils/firebase.js";
+import { NextResponse } from "next/server";
+
 import {
   collection,
   getDocs,
@@ -10,8 +12,11 @@ import {
 } from "firebase/firestore";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route.js";
 import { getServerSession } from "next-auth/next";
-
+import { authenticate } from "@/utils/authenticate";
 export async function GET(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const course = req.nextUrl.searchParams.get("course");
 
@@ -32,6 +37,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  if (!(await authenticate("ula"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const course_data = await req.json();
 
@@ -81,5 +89,37 @@ export async function POST(req) {
     return new Response(e.message, {
       status: 500,
     });
+  }
+}
+
+export async function PUT(req) {
+  const res = NextResponse;
+  if (!(await authenticate("ula"))) {
+    return res.json("Unauthenticated");
+  }
+  try {
+    const { ula, course, section } = await req.json();
+
+    const termRef = doc(db, "settings", "selected_term");
+    const termSnap = await getDoc(termRef);
+    const { selected_term: term } = termSnap.data();
+
+    const courseRef = collection(db, term, "courses", course);
+    const sectionRef = doc(courseRef, section);
+    await updateDoc(
+      sectionRef,
+      {
+        ula: ula,
+      },
+      { merge: true },
+    );
+    return res.json({ message: "OK" });
+  } catch (e) {
+    return res.json(
+      { message: e.message },
+      {
+        status: 500,
+      },
+    );
   }
 }

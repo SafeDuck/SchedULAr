@@ -8,7 +8,7 @@ import {
   deleteDoc,
   arrayUnion,
 } from "firebase/firestore";
-
+import { authenticate } from "@/utils/authenticate";
 function insertColon(str) {
   return str.slice(0, 2) + ":" + str.slice(2);
 }
@@ -30,6 +30,9 @@ function intervalLength(beginTime, endTime) {
 }
 
 export async function POST(req) {
+  if (!(await authenticate("admin"))) {
+    return new Response("Unauthenticated");
+  }
   try {
     const { term } = await req.json();
     if (!term) {
@@ -88,11 +91,16 @@ export async function POST(req) {
               let endTime = roundUpToNearestHalfHour(
                 insertColon(meeting.meetingTime.endTime),
               );
+              let location =
+                meeting.meetingTime.room === "ONLINE"
+                  ? "Online"
+                  : `${meeting.meetingTime.building} ${meeting.meetingTime.room}`;
 
               return {
                 id: section.id,
                 section: section.sequenceNumber,
-                day,
+                location: location,
+                day: day,
                 begin_time: beginTime,
                 end_time: endTime,
                 length: intervalLength(beginTime, endTime),

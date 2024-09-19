@@ -21,7 +21,7 @@ const Page = () => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-20">
+    <div className="w-full flex flex-col justify-center items-center gap-20 my-[6vh]">
       <HoursOverview />
       <ManageUsers />
       <AddUser />
