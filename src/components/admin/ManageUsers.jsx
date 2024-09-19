@@ -1,15 +1,7 @@
 "use client";
 import { api } from "@/utils/api";
+import { useUsers } from "@/utils/useUsers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-const fetchUsers = async () => {
-  try {
-    const data = await api({ url: "/api/users", method: "GET" });
-    return data;
-  } catch (error) {
-    console.error("Error fetching users:", error);
-  }
-};
 
 const deleteUser = async (email) => {
   try {
@@ -64,10 +56,7 @@ const ManageUsers = () => {
     data: users,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-  });
+  } = useUsers();
 
   if (isLoading) {
     return <div>Loading...</div>;
