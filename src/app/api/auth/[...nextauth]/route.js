@@ -41,7 +41,6 @@ const authOptions = {
             image: user.image,
             createdAt: new Date().toISOString(),
           },
-          { merge: true },
         );
 
         return true;
