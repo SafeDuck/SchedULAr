@@ -9,6 +9,7 @@ import CustomToolbar from "./Toolbar";
 import Modal from "./Modal.jsx";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const mLocalizer = momentLocalizer(moment);
 
@@ -35,6 +36,11 @@ const CalendarEvents = () => {
     queryKey: ["courses"],
     queryFn: async () => {
       const response = await fetch("/api/course_list");
+      if (!response.ok) {
+        toast.error("Failed to fetch course list");
+        return [];
+      }
+
       const courseList = await response.json();
       return courseList.sort((a, b) => a.localeCompare(b));
     },
@@ -49,8 +55,12 @@ const CalendarEvents = () => {
     queryKey: ["sections", currentCourse],
     queryFn: async () => {
       const response = await fetch(`/api/course_data?course=${currentCourse}`);
-      const sectionData = await response.json();
+      if (!response.ok) {
+        toast.error("Failed to fetch course data");
+        return [];
+      }
 
+      const sectionData = await response.json();
       const sections = sectionData.map((section) => ({
         id: section.id,
         title: `Sec ${section.section}`,

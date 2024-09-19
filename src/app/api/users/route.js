@@ -19,7 +19,7 @@ const userDataExtractor = (data) => ({
 
 export async function GET(req) {
   if (!(await authenticate("ula"))) {
-    return new Response("Unauthenticated");
+    return new Response("Unauthenticated", { status: 403 });
   }
   try {
     const users = req.nextUrl.searchParams.get("users");
@@ -50,7 +50,7 @@ export async function GET(req) {
 export async function POST(req) {
   const res = NextResponse;
   if (!(await authenticate("admin"))) {
-    return res.json("Unauthenticated");
+    return res.json("Unauthenticated", { status: 403 });
   }
   const { email, ula, admin } = await req.json();
 
@@ -75,7 +75,7 @@ export async function POST(req) {
 export async function DELETE(req) {
   const res = NextResponse;
   if (!(await authenticate("admin"))) {
-    return res.json("Unauthenticated");
+    return res.json("Unauthenticated", { status: 403 });
   }
   const { email } = await req.json();
 
@@ -97,7 +97,7 @@ export async function DELETE(req) {
 export async function PUT(req) {
   const res = NextResponse;
   if (!(await authenticate("admin"))) {
-    return res.json("Unauthenticated");
+    return res.json("Unauthenticated", { status: 403 });
   }
   const { email, ula, admin } = await req.json();
 

@@ -10,11 +10,11 @@ export const authenticate = async (role) => {
     ) {
       return false;
     }
-  } else if ("admin") {
+  } else if (role === "admin") {
     if (!session?.user || session.user.admin === 0) {
       return false;
     }
-  } else {
-    return true;
   }
+
+  return true;
 };

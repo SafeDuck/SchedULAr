@@ -15,6 +15,9 @@ const authOptions = {
     GoogleProvider({
       clientId: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
   ],
   callbacks: {

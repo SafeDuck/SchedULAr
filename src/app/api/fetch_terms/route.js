@@ -1,7 +1,7 @@
 import { authenticate } from "@/utils/authenticate";
 export async function GET() {
   if (!(await authenticate("admin"))) {
-    return new Response("Unauthenticated");
+    return new Response("Unauthenticated", { status: 403 });
   }
   try {
     const req = await fetch(

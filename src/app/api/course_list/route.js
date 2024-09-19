@@ -4,7 +4,7 @@ import { authenticate } from "@/utils/authenticate";
 
 export async function GET() {
   if (!(await authenticate("ula"))) {
-    return new Response("Unauthenticated");
+    return new Response("Unauthenticated", { status: 403 });
   }
   try {
     const termRef = doc(db, "settings", "selected_term");
