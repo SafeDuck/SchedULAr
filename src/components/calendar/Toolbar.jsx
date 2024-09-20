@@ -18,15 +18,17 @@ const CustomToolbar = ({
     setModalEvent(null);
     let selectionInCourse = false;
     let unselectedInCourse = false;
-    for (const section of userSelection[currentCourse]) {
-      if (section.preferred || section.available || section.unavailable) {
-        selectionInCourse = true;
-      } else {
-        unselectedInCourse = true;
-      }
-      if (selectionInCourse && unselectedInCourse) {
-        toast.error("Please select a choice for all sections");
-        return;
+    if (userSelection.lenth > 0) {
+      for (const section of userSelection[currentCourse]) {
+        if (section.preferred || section.available || section.unavailable) {
+          selectionInCourse = true;
+        } else {
+          unselectedInCourse = true;
+        }
+        if (selectionInCourse && unselectedInCourse) {
+          toast.error("Please select a choice for all sections");
+          return;
+        }
       }
     }
 
@@ -37,13 +39,20 @@ const CustomToolbar = ({
     }
 
     // send selection to backend
-    const courseDataReq = await fetch("/api/course_data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ [currentCourse]: userSelection[currentCourse] }),
-    });
+    if (userSelection.lenth > 0) {
+      const courseDataReq = await fetch("/api/course_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ [currentCourse]: userSelection[currentCourse] }),
+      });
+
+      if (!courseDataReq.ok) {
+        toast.error("Failed to submit selection");
+        return;
+      }
+    }
 
     const officeHoursReq = await fetch("/api/office_hours", {
       method: "PUT",
@@ -52,17 +61,16 @@ const CustomToolbar = ({
 
     if (!officeHoursReq.ok) {
       toast.error("Failed to submit office hours");
-    } else if (!courseDataReq.ok) {
-      toast.error("Failed to submit selection");
-    } else {
-      toast.success("Selection submitted for " + currentCourse);
-
-      queryClient.setQueryData(["office_hours"], (oldOfficeHours) => ({
-        ...oldOfficeHours,
-        [currentCourse]: officeHours,
-      }));
-      queryClient.invalidateQueries(["usersModal", currentCourse]);
+      return;
     }
+
+    toast.success("Selection submitted for " + currentCourse);
+
+    queryClient.setQueryData(["office_hours"], (oldOfficeHours) => ({
+      ...oldOfficeHours,
+      [currentCourse]: officeHours,
+    }));
+    queryClient.invalidateQueries(["usersModal", currentCourse]);
   };
 
   return (

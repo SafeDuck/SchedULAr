@@ -52,11 +52,7 @@ const ManageUsers = () => {
     });
   };
 
-  const {
-    data: users,
-    isLoading,
-    isError,
-  } = useUsers();
+  const { data: users, isLoading, isError } = useUsers();
 
   if (isLoading) {
     return <div>Loading...</div>;
