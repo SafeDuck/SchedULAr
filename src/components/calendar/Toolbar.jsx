@@ -18,7 +18,7 @@ const CustomToolbar = ({
     setModalEvent(null);
     let selectionInCourse = false;
     let unselectedInCourse = false;
-    if (userSelection.lenth > 0) {
+    if (Object.keys(userSelection) > 0) {
       for (const section of userSelection[currentCourse]) {
         if (section.preferred || section.available || section.unavailable) {
           selectionInCourse = true;
@@ -39,7 +39,7 @@ const CustomToolbar = ({
     }
 
     // send selection to backend
-    if (userSelection.lenth > 0) {
+    if (Object.keys(userSelection).length > 0) {
       const courseDataReq = await fetch("/api/course_data", {
         method: "POST",
         headers: {
