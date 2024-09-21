@@ -18,3 +18,6 @@
 .rbc-time-view .rbc-header {
   border-bottom: none;
 }
+
+.rbc-day-slot .rbc-selected.rbc-background-event, .rbc-event.rbc-selected {
+}
