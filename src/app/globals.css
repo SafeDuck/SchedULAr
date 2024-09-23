@@ -19,6 +19,7 @@
   border-bottom: none;
 }
 
-.rbc-day-slot .rbc-selected.rbc-background-event, .rbc-event.rbc-selected {
+.rbc-day-slot .rbc-selected.rbc-background-event,
+.rbc-event.rbc-selected {
   background-color: #3174ad !important;
 }

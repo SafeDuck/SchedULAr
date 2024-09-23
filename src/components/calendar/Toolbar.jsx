@@ -18,7 +18,7 @@ const CustomToolbar = ({
     setModalEvent(null);
     let selectionInCourse = false;
     let unselectedInCourse = false;
-    if (Object.keys(userSelection) > 0) {
+    if (Object.keys(userSelection).length > 0) {
       for (const section of userSelection[currentCourse]) {
         if (section.preferred || section.available || section.unavailable) {
           selectionInCourse = true;
