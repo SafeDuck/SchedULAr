@@ -76,7 +76,6 @@ const CalendarEvents = () => {
 
       return sections;
     },
-    placeholderData: [],
   });
 
   const { data: officeHours } = useQuery({
@@ -88,7 +87,7 @@ const CalendarEvents = () => {
     placeholderData: {},
   });
 
-  if (sections.length > 0 && !(currentCourse in eventStates)) {
+  if (sections !== undefined && !(currentCourse in eventStates)) {
     setEventStates({
       ...eventStates,
       [currentCourse]: sections.map((section) => ({
