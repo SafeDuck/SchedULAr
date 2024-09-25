@@ -67,9 +67,9 @@ const CalendarEvents = () => {
         section: section.section,
         start: convertToDate(section.day, section.begin_time),
         end: convertToDate(section.day, section.end_time),
-        preferred: section.preferred,
-        available: section.available,
-        unavailable: section.unavailable,
+        preferred: section.preferred || [],
+        available: section.available || [],
+        unavailable: section.unavailable || [],
         location: section.location,
         ula: section.ula,
       }));
@@ -163,6 +163,19 @@ const CalendarEvents = () => {
             }}
             onSelectEvent={(event) => {
               setModalEvent(event);
+            }}
+            eventPropGetter={(event, isSelected) => {
+              if (event.preferred.length > 0) {
+                return {
+                  className: "!bg-green-300 !text-black !border-green-400",
+                };
+              } else if (event.available.length > 0) {
+                return {
+                  className: "!bg-yellow-300 !text-black !border-yellow-400",
+                };
+              } else {
+                return { className: "!bg-red-300 !text-black !border-red-400" };
+              }
             }}
           />
         </div>

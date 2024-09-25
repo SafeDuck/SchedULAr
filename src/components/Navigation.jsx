@@ -6,7 +6,7 @@ import { items } from "@/data/nav";
 const Navigation = () => {
   const [selected, setSelected] = useState("");
   return (
-    <div className="md:px-7 z-30 h-8 md:h-[8vh] bg-blue-200 w-full flex md:justify-between items-center md:text-lg 2xl:text-2xl pl-2">
+    <div className="md:px-7 z-30 h-8 md:h-[8vh] bg-blue-300 w-full flex md:justify-between items-center md:text-lg 2xl:text-2xl pl-2">
       <Link
         onClick={() => {
           setSelected("");
@@ -14,7 +14,9 @@ const Navigation = () => {
         className="hover:underline w-1/5 2xl:w-1/4 text-3xl font-semibold font-mono"
         href="/"
       >
-        <h1>SchedULAr</h1>
+        <h1>
+          Sched<p className="text-yellow-300 inline">ULA</p>r
+        </h1>
       </Link>
       <div className="md:pl-0 pl-3 flex items-center w-1/3 justify-between">
         {items.map((item, index) => (
