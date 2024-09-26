@@ -21,8 +21,8 @@ const Modal = ({ event, setEvent, course }) => {
 
   const fetchUsers = async (req) => {
     const reqs = req.map((user) => {
-      if (user.length > 0) {
-        return api({ url: `/api/users?users=${user}`, method: "GET" });
+      if (user.size > 0) {
+        return api({ url: `/api/users?users=${Array.from(user)}`, method: "GET" });
       } else {
         return Promise.resolve([]);
       }
@@ -38,11 +38,7 @@ const Modal = ({ event, setEvent, course }) => {
   } = useQuery({
     queryKey: ["usersModal", event?.id],
     queryFn: () =>
-      fetchUsers([
-        event?.preferred || [],
-        event?.available || [],
-        event?.unavailable || [],
-      ]),
+      fetchUsers([event.preferred, event.available, event.unavailable]),
     enabled: !!event,
   });
 

@@ -14,7 +14,7 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
           <LiaCheckDoubleSolid
             className={`${
               eventState?.preferred
-                ? "backdrop-brightness-[65%] rounded-lg text-green-400"
+                ? "backdrop-brightness-[65%] rounded-lg text-green-200"
                 : "text-black"
             } ${!eventState?.preferred ? "hover:scale-110 duration-300" : ""}  p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "preferred")}
@@ -22,7 +22,7 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
           <LiaCheckSolid
             className={`${
               eventState?.available
-                ? "backdrop-brightness-[65%] rounded-lg text-yellow-400"
+                ? "backdrop-brightness-[65%] rounded-lg text-yellow-200"
                 : "text-black"
             } ${!eventState?.available ? "hover:-translate-y-1 duration-300" : ""} p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "available")}
@@ -30,7 +30,7 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
           <LiaTimesSolid
             className={`${
               eventState?.unavailable
-                ? "backdrop-brightness-[65%] rounded-lg text-red-400"
+                ? "backdrop-brightness-[65%] rounded-lg text-red-200"
                 : "text-black "
             } ${!eventState?.unavailable ? "hover:-translate-y-1 duration-300" : ""}  p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "unavailable")}

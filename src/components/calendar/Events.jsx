@@ -67,9 +67,11 @@ const CalendarEvents = () => {
         section: section.section,
         start: convertToDate(section.day, section.begin_time),
         end: convertToDate(section.day, section.end_time),
-        preferred: section.preferred || [],
-        available: section.available || [],
-        unavailable: section.unavailable || [],
+        preferred: section.preferred ? new Set(section.preferred) : new Set(),
+        available: section.available ? new Set(section.available) : new Set(),
+        unavailable: section.unavailable
+          ? new Set(section.unavailable)
+          : new Set(),
         location: section.location,
         ula: section.ula,
       }));
@@ -93,9 +95,9 @@ const CalendarEvents = () => {
       [currentCourse]: sections.map((section) => ({
         id: section.id,
         section: section.section,
-        preferred: section.preferred?.includes(userEmail) || false,
-        available: section.available?.includes(userEmail) || false,
-        unavailable: section.unavailable?.includes(userEmail) || false,
+        preferred: section.preferred?.has(userEmail) || false,
+        available: section.available?.has(userEmail) || false,
+        unavailable: section.unavailable?.has(userEmail) || false,
       })),
     });
   }
@@ -164,12 +166,12 @@ const CalendarEvents = () => {
             onSelectEvent={(event) => {
               setModalEvent(event);
             }}
-            eventPropGetter={(event, isSelected) => {
-              if (event.preferred.length > 0) {
+            eventPropGetter={(event) => {
+              if (event.preferred.size > 0) {
                 return {
                   className: "!bg-green-300 !text-black !border-green-400",
                 };
-              } else if (event.available.length > 0) {
+              } else if (event.available.size > 0) {
                 return {
                   className: "!bg-yellow-300 !text-black !border-yellow-400",
                 };

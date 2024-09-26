@@ -7,9 +7,9 @@ const Landing = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <p className="text-3xl font-semibold font-mono">
+      <div className="text-3xl font-semibold font-mono">
         UCR-<p className="text-yellow-400 inline">ULA</p>-Scheduler
-      </p>
+      </div>
       {session ? (
         <>
           <div className="mt-4">
