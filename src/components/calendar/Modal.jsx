@@ -22,7 +22,10 @@ const Modal = ({ event, setEvent, course }) => {
   const fetchUsers = async (req) => {
     const reqs = req.map((user) => {
       if (user.size > 0) {
-        return api({ url: `/api/users?users=${Array.from(user)}`, method: "GET" });
+        return api({
+          url: `/api/users?users=${Array.from(user)}`,
+          method: "GET",
+        });
       } else {
         return Promise.resolve([]);
       }
@@ -36,39 +39,40 @@ const Modal = ({ event, setEvent, course }) => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["usersModal", event?.id],
+    queryKey: ["usersModal", course, event?.id],
     queryFn: () =>
       fetchUsers([event.preferred, event.available, event.unavailable]),
     enabled: !!event,
   });
 
-  useEffect(() => {
-    if (users && event.ula) {
-      let found = false;
-      users[0].forEach((user, index) => {
-        if (user.name === event.ula) {
-          setSelected({ group: "preferred", index, name: user.name });
-          found = true;
-        }
-      });
-      if (!found) {
-        users[1].forEach((user, index) => {
-          if (user.name === event.ula) {
-            setSelected({ group: "available", index, name: user.name });
-            found = true;
-          }
-        });
-      }
-      if (!found) {
-        users[2].forEach((user, index) => {
-          if (user.name === event.ula) {
-            setSelected({ group: "unavailable", index, name: user.name });
-          }
-        });
-      }
-    }
-  }, [users, event.ula]);
+  // useEffect(() => {
+  //   if (users && event.ula) {
+  //     let found = false;
+  //     users[0].forEach((user, index) => {
+  //       if (user.name === event.ula) {
+  //         setSelected({ group: "preferred", index, name: user.name });
+  //         found = true;
+  //       }
+  //     });
+  //     if (!found) {
+  //       users[1].forEach((user, index) => {
+  //         if (user.name === event.ula) {
+  //           setSelected({ group: "available", index, name: user.name });
+  //           found = true;
+  //         }
+  //       });
+  //     }
+  //     if (!found) {
+  //       users[2].forEach((user, index) => {
+  //         if (user.name === event.ula) {
+  //           setSelected({ group: "unavailable", index, name: user.name });
+  //         }
+  //       });
+  //     }
+  //   }
+  // }, [users, event.ula]);
 
+  console.log("ULA", event.ula);
   const handleUserClick = async (group, index, name) => {
     try {
       if (!session.data.user.admin) {
@@ -90,7 +94,16 @@ const Modal = ({ event, setEvent, course }) => {
       } else {
         setSelected({ group, index, name });
       }
-      queryClient.invalidateQueries(["usersModal", event.id]); // refetch modal data
+      queryClient.setQueryData(["sections", course], (oldSections) => {
+        return oldSections.map((section) => {
+          return {
+            ...section,
+            ula: section.section === event.section ? name : event.ula,
+          };
+        });
+      });
+
+      //TODO: SET the query data // refetch modal data
     } catch (err) {
       toast.error("Error!");
     }
