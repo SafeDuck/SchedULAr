@@ -20,10 +20,10 @@ const Modal = ({ event, setEvent, course }) => {
   const queryClient = useQueryClient();
 
   const fetchUsers = async (req) => {
-    const reqs = req.map((user) => {
-      if (user.size > 0) {
+    const reqs = req.map((users) => {
+      if (users.size > 0) {
         return api({
-          url: `/api/users?users=${Array.from(user)}`,
+          url: `/api/users?users=${Array.from(users)}`,
           method: "GET",
         });
       } else {
@@ -45,34 +45,33 @@ const Modal = ({ event, setEvent, course }) => {
     enabled: !!event,
   });
 
-  // useEffect(() => {
-  //   if (users && event.ula) {
-  //     let found = false;
-  //     users[0].forEach((user, index) => {
-  //       if (user.name === event.ula) {
-  //         setSelected({ group: "preferred", index, name: user.name });
-  //         found = true;
-  //       }
-  //     });
-  //     if (!found) {
-  //       users[1].forEach((user, index) => {
-  //         if (user.name === event.ula) {
-  //           setSelected({ group: "available", index, name: user.name });
-  //           found = true;
-  //         }
-  //       });
-  //     }
-  //     if (!found) {
-  //       users[2].forEach((user, index) => {
-  //         if (user.name === event.ula) {
-  //           setSelected({ group: "unavailable", index, name: user.name });
-  //         }
-  //       });
-  //     }
-  //   }
-  // }, [users, event.ula]);
+  useEffect(() => {
+    if (users && event.ula) {
+      let found = false;
+      users[0].forEach((user, index) => {
+        if (user.name === event.ula) {
+          setSelected({ group: "preferred", index, name: user.name });
+          found = true;
+        }
+      });
+      if (!found) {
+        users[1].forEach((user, index) => {
+          if (user.name === event.ula) {
+            setSelected({ group: "available", index, name: user.name });
+            found = true;
+          }
+        });
+      }
+      if (!found) {
+        users[2].forEach((user, index) => {
+          if (user.name === event.ula) {
+            setSelected({ group: "unavailable", index, name: user.name });
+          }
+        });
+      }
+    }
+  }, [users, event.ula]);
 
-  console.log("ULA", event.ula);
   const handleUserClick = async (group, index, name) => {
     try {
       if (!session.data.user.admin) {
@@ -94,14 +93,17 @@ const Modal = ({ event, setEvent, course }) => {
       } else {
         setSelected({ group, index, name });
       }
-      queryClient.setQueryData(["sections", course], (oldSections) => {
-        return oldSections.map((section) => {
-          return {
-            ...section,
-            ula: section.section === event.section ? name : event.ula,
-          };
-        });
-      });
+      queryClient.setQueryData(["sections", course], (oldSections) =>
+        oldSections.map((section) => {
+          if (section.section === event.section) {
+            const newSection = { ...section, ula: name };
+            setEvent(newSection);
+            return newSection;
+          } else {
+            return section;
+          }
+        }),
+      );
 
       //TODO: SET the query data // refetch modal data
     } catch (err) {
