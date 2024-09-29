@@ -27,11 +27,11 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);
 
   return (
-    <ReactQueryClientProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
-        >
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col justify-between`}
+      >
+        <ReactQueryClientProvider>
           <div className="hidden md:block">
             <Navigation />
           </div>
@@ -44,8 +44,8 @@ export default async function RootLayout({ children }) {
               </div>
             </Session>
           </div>
-        </body>
-      </html>
-    </ReactQueryClientProvider>
+        </ReactQueryClientProvider>
+      </body>
+    </html>
   );
 }

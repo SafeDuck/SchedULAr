@@ -2,6 +2,7 @@ import Tag from "./Tag";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 const CustomToolbar = ({
   currentCourse,
@@ -13,6 +14,8 @@ const CustomToolbar = ({
 }) => {
   const [officeHours, setOfficeHours] = useState(defaultOfficeHours);
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const userEmail = session.user.email;
 
   const handleSubmit = async () => {
     setModalEvent(null);
@@ -70,7 +73,29 @@ const CustomToolbar = ({
       ...oldOfficeHours,
       [currentCourse]: officeHours,
     }));
-    queryClient.invalidateQueries(["usersModal", currentCourse]);
+    queryClient.setQueryData(["sections", currentCourse], (oldSections) => {
+      return oldSections.map((section) => {
+        const selection = userSelection[currentCourse].find(
+          (s) => s.section === section.section,
+        );
+
+        const updateSet = (set, condition) => {
+          return new Set(
+            condition
+              ? [...set, userEmail]
+              : [...set].filter((email) => email !== userEmail),
+          );
+        };
+
+        return {
+          ...section,
+          preferred: updateSet(section.preferred, selection?.preferred),
+          available: updateSet(section.available, selection?.available),
+          unavailable: updateSet(section.unavailable, selection?.unavailable),
+        };
+      });
+    });
+    queryClient.invalidateQueries({ queryKey: ["usersModal", currentCourse] });
   };
 
   return (

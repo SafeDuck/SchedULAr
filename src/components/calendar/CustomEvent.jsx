@@ -7,32 +7,32 @@ import {
 
 const CustomEvent = ({ event, eventState, onEventClick }) => {
   return (
-    <div className="py-1 h-full flex flex-col justify-between">
-      <p className="inline">{event.title}</p>
+    <div className="py-1 h-full flex flex-col justify-between ">
+      <p className="inline text-black">{event.title}</p>
       <div className="flex justify-center">
         <div className="flex flex-row justify-between text-3xl max-w-[115px] w-full">
           <LiaCheckDoubleSolid
             className={`${
               eventState?.preferred
-                ? "bg-[#225B8C] rounded-lg text-green-300"
-                : "text-white"
-            } ${!eventState?.preferred ? "hover:text-green-300" : ""}  p-0.5`}
+                ? "backdrop-brightness-[65%] rounded-lg text-green-200"
+                : "text-black"
+            } ${!eventState?.preferred ? "hover:scale-110 duration-300" : ""}  p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "preferred")}
           />
           <LiaCheckSolid
             className={`${
               eventState?.available
-                ? "bg-[#225B8C] rounded-lg text-yellow-300"
-                : "text-white"
-            } ${!eventState?.available ? "hover:text-yellow-300" : ""} p-0.5`}
+                ? "backdrop-brightness-[65%] rounded-lg text-yellow-200"
+                : "text-black"
+            } ${!eventState?.available ? "hover:-translate-y-1 duration-300" : ""} p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "available")}
           />
           <LiaTimesSolid
             className={`${
               eventState?.unavailable
-                ? "bg-[#225B8C] rounded-lg text-red-300"
-                : "text-white"
-            } ${!eventState?.unavailable ? "hover:text-red-300" : ""}  p-0.5`}
+                ? "backdrop-brightness-[65%] rounded-lg text-red-200"
+                : "text-black "
+            } ${!eventState?.unavailable ? "hover:-translate-y-1 duration-300" : ""}  p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "unavailable")}
           />
         </div>

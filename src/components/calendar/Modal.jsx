@@ -20,9 +20,12 @@ const Modal = ({ event, setEvent, course }) => {
   const queryClient = useQueryClient();
 
   const fetchUsers = async (req) => {
-    const reqs = req.map((user) => {
-      if (user.length > 0) {
-        return api({ url: `/api/users?users=${user}`, method: "GET" });
+    const reqs = req.map((users) => {
+      if (users.size > 0) {
+        return api({
+          url: `/api/users?users=${Array.from(users)}`,
+          method: "GET",
+        });
       } else {
         return Promise.resolve([]);
       }
@@ -36,13 +39,9 @@ const Modal = ({ event, setEvent, course }) => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["usersModal", event?.id],
+    queryKey: ["usersModal", course, event?.id],
     queryFn: () =>
-      fetchUsers([
-        event?.preferred || [],
-        event?.available || [],
-        event?.unavailable || [],
-      ]),
+      fetchUsers([event.preferred, event.available, event.unavailable]),
     enabled: !!event,
   });
 
@@ -94,14 +93,26 @@ const Modal = ({ event, setEvent, course }) => {
       } else {
         setSelected({ group, index, name });
       }
-      queryClient.invalidateQueries(["usersModal", event.id]); // refetch modal data
+      queryClient.setQueryData(["sections", course], (oldSections) =>
+        oldSections.map((section) => {
+          if (section.section === event.section) {
+            const newSection = { ...section, ula: name };
+            setEvent(newSection);
+            return newSection;
+          } else {
+            return section;
+          }
+        }),
+      );
+
+      //TODO: SET the query data // refetch modal data
     } catch (err) {
       toast.error("Error!");
     }
   };
 
   return (
-    <div className=" bg-blue-400 font-playfair  bottom-2/3 fixed -translate-y-3 md:min-w-[30vw] z-10 drop-shadow-lg">
+    <div className=" bg-blue-400 font-playfair bottom-1/2 fixed -translate-y-3 md:min-w-[30vw] z-10 drop-shadow-lg">
       {isLoading ? (
         <div className="text-white text-2xl flex flex-row justify-center items-center my-[15%]">
           Loading...
