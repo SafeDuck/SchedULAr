@@ -112,7 +112,7 @@ const Modal = ({ event, setEvent, course }) => {
   };
 
   return (
-    <div className=" bg-blue-400 font-playfair  bottom-2/3 fixed -translate-y-3 md:min-w-[30vw] z-10 drop-shadow-lg">
+    <div className=" bg-blue-400 font-playfair bottom-1/2 fixed -translate-y-3 md:min-w-[30vw] z-10 drop-shadow-lg">
       {isLoading ? (
         <div className="text-white text-2xl flex flex-row justify-center items-center my-[15%]">
           Loading...

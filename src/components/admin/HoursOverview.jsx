@@ -48,7 +48,7 @@ const HoursOverview = () => {
                     {hours[ulaEmail].hours}
                   </td>
                   <td className="border border-gray-400 p-2">
-                    {(hours[ulaEmail].hours / 40) * 100}%
+                    {((hours[ulaEmail].hours / 40) * 100).toFixed(2)}%
                   </td>
                 </tr>
               );
