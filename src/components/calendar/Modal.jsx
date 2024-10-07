@@ -66,9 +66,15 @@ const Modal = ({ event, setEvent, course }) => {
         users[2].forEach((user, index) => {
           if (user.name === event.ula) {
             setSelected({ group: "unavailable", index, name: user.name });
+            found = true;
           }
         });
       }
+      if (!found) {
+        setSelected({ group: null, index: null, name: null });
+      }
+    } else {
+      setSelected({ group: null, index: null, name: null });
     }
   }, [users, event.ula]);
 
