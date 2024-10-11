@@ -1,7 +1,7 @@
 "use client";
 import { api } from "@/utils/api";
 import { useUsers } from "@/utils/useUsers";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const deleteUser = async (email) => {
   try {

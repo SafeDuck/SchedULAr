@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import HoursOverview from "@/components/admin/HoursOverview";
 import ManageUsers from "@/components/admin/ManageUsers";
 import AddUser from "@/components/admin/AddUser";
+import Report from "@/components/admin/Report";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -25,6 +26,7 @@ const Page = () => {
       <HoursOverview />
       <ManageUsers />
       <AddUser />
+      <Report />
     </div>
   );
 };
