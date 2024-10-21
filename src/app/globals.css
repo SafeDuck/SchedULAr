@@ -18,3 +18,8 @@
 .rbc-time-view .rbc-header {
   border-bottom: none;
 }
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
