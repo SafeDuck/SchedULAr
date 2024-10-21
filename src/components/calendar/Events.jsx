@@ -10,6 +10,7 @@ import Modal from "./Modal.jsx";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { Switch } from "@/components/ui/switch";
 
 const mLocalizer = momentLocalizer(moment);
 
@@ -30,8 +31,11 @@ const convertToDate = (day, time) => {
 
 const CalendarEvents = () => {
   const [modalEvent, setModalEvent] = useState(null);
+  const [assignedFilter, setAssignedFilter] = useState(false);
+
   const session = useSession();
   const userEmail = session.data.user.email;
+  const userName = session.data.user.name;
   const { data: courseList } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
@@ -127,9 +131,17 @@ const CalendarEvents = () => {
     <section className="w-full flex justify-center items-center flex-col my-[6vh]">
       <div className="w-11/12 flex justify-center items-center">
         <div className="w-full h-[90vh] relative">
+          <div className="flex flex-row gap-3 text-xl items-center">
+            <Switch onCheckedChange={(event) => setAssignedFilter(event)} />
+            Show My Assigned
+          </div>
           <Calendar
             className="w-full m-0 p-0"
-            events={sections}
+            events={
+              assignedFilter
+                ? sections?.filter((section) => userName === section.ula)
+                : sections
+            }
             localizer={mLocalizer}
             defaultDate={new Date(2023, 0, 1)}
             defaultView={"work_week"}
