@@ -16,7 +16,7 @@ const CustomEvent = ({ event, eventState, onEventClick }) => {
               eventState?.preferred
                 ? "backdrop-brightness-[65%] rounded-lg text-green-200"
                 : "text-black"
-            } ${!eventState?.preferred ? "hover:scale-110 duration-300" : ""}  p-0.5`}
+            } ${!eventState?.preferred ? "hover:-translate-y-1 duration-300" : ""}  p-0.5`}
             onClick={(e) => onEventClick(e, event.id, "preferred")}
           />
           <LiaCheckSolid

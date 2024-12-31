@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import CalendarEvents from "@/components/calendar/Events";
+import MyCalendar from "@/components/calendar/MyCalendar";
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -24,7 +24,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
-      <CalendarEvents />
+      <MyCalendar />
     </div>
   );
 };
