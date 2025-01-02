@@ -5,7 +5,11 @@ export const items = [
   },
   {
     name: "Total Hours",
-    link: "/total_hours",
+    link: "/total-hours",
+  },
+  {
+    name: "My Sections",
+    link: "/my-sections",
   },
   {
     name: "Admin",
