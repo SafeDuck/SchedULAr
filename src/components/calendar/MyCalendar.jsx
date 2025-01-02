@@ -43,6 +43,7 @@ const CalendarEvents = () => {
     },
     placeholderData: [],
   });
+
   const allQueries = useQueries({
     queries: courseList.map((course) => {
       return {
@@ -61,6 +62,15 @@ const CalendarEvents = () => {
             section: section.section,
             start: convertToDate(section.day, section.begin_time),
             end: convertToDate(section.day, section.end_time),
+            preferred: section.preferred
+              ? new Set(section.preferred)
+              : new Set(),
+            available: section.available
+              ? new Set(section.available)
+              : new Set(),
+            unavailable: section.unavailable
+              ? new Set(section.unavailable)
+              : new Set(),
             location: section.location,
             ula: section.ula,
             course: course,
