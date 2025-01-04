@@ -78,6 +78,7 @@ const CalendarEvents = () => {
           : new Set(),
         location: section.location,
         ula: section.ula,
+        course: currentCourse,
       }));
 
       return sections;
