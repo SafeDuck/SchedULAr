@@ -25,7 +25,7 @@ The following environment variables are required and must be stored in an `.env`
 ```env
 NEXT_PUBLIC_FIREBASE_API_KEY=
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
@@ -78,3 +78,20 @@ npm run eslint
 ```bash
 npm run build
 ```
+
+## Main Functionalities
+### 1. Lab sections for each course are automactially pulled from the Banner API
+### 2. ULA select list their availbility for each lab section
+- Double check mark (available)
+- Single check mark (available if needed)
+- Cross mark (not available)
+- Input number of office hours planning to host per week
+- Hit the submit button
+
+![image](https://github.com/user-attachments/assets/0543ed94-02bf-4dc1-b98f-dc0d0389c98c)
+### 3. Click on a lab section to show pop-up modal
+- Displays the course, course section number, and location of the lab
+- Displays availability for all ULA
+- Click on a ULA's name to assign them to the lab section (admin only)
+
+![image](https://github.com/user-attachments/assets/686ce6d6-1607-49ca-9274-fe970ce50793)
