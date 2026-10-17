@@ -82,6 +82,7 @@ const Modal = ({ event, setEvent, course }) => {
   const handleUserClick = async (group, index, name) => { 
     try {
       if (!session.data.user.admin) {
+        // TODO: Fix Bug session bug
         toast.error("Admin Action Only");
         return;
       }
@@ -110,7 +111,7 @@ const Modal = ({ event, setEvent, course }) => {
           }
         }),
       );
-
+      //TODO: SET the query data // refetch modal data
     } catch (err) {
       toast.error("Error!");
     }
