@@ -27,7 +27,6 @@ const AddUser = () => {
   const mutation = useMutation({
     mutationFn: handleSubmit,
     onSuccess: () => {
-      // queryClient.setQueryData(["users"], (oldData) => newData)
       queryClient.invalidateQueries(["users"]);
       emailRef.current.value = "";
       ulaRef.current.checked = false;

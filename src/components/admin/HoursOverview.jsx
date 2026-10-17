@@ -19,7 +19,6 @@ const HoursOverview = () => {
     (a, b) => a + parseFloat(b.hours),
     0,
   );
-
   return (
     <div className="w-2/3 flex flex-col justify-center items-center">
       <div className="text-2xl font-semibold mb-4">Total Hours Overview</div>

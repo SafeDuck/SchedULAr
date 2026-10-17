@@ -49,7 +49,6 @@ export async function POST(req) {
     const termRef = doc(db, "settings", "selected_term");
     const termSnap = await getDoc(termRef);
     const { selected_term: term } = termSnap.data();
-
     for (const course of Object.keys(course_data)) {
       const courseRef = collection(db, term, "courses", course);
 

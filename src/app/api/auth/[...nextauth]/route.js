@@ -28,8 +28,6 @@ const authOptions = {
 
         // Get user document reference
         const userRef = doc(db, "users", user.email);
-        // Check if user already exists in Firestore
-        // const userSnap = await getDoc(userRef);
 
         // Create a new user document in Firestore
         await updateDoc(

@@ -73,6 +73,7 @@ const CustomToolbar = ({
       ...oldOfficeHours,
       [currentCourse]: officeHours,
     }));
+    // Update query cache to match user state
     queryClient.setQueryData(["sections", currentCourse], (oldSections) => {
       return oldSections.map((section) => {
         const selection = userSelection[currentCourse].find(
