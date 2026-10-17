@@ -18,7 +18,7 @@ export async function GET(req) {
     if (!officeHours) {
       return Response.json({});
     }
-
+    // get total office hours per course
     if (summary === "true") {
       const summary = {};
       for (const course in officeHours) {

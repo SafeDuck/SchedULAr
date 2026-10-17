@@ -85,6 +85,7 @@ const CalendarEvents = () => {
     },
   });
 
+  // console.log(sections)
   const { data: officeHours } = useQuery({
     queryKey: ["office_hours"],
     queryFn: async () => {
@@ -106,15 +107,14 @@ const CalendarEvents = () => {
       })),
     });
   }
-
-  // Update the state for the clicked icon while resetting others
+  // console.log(eventStates)
+  
   const handleEventClick = (e, eventId, iconType) => {
-    e.stopPropagation();
+    e.stopPropagation(); 
     setEventStates((prevStates) => ({
-      ...prevStates,
+      ...prevStates, 
       [currentCourse]: prevStates[currentCourse]?.map((event) => {
         if (event.id === eventId) {
-          // Toggle the state of the clicked icon
           return {
             ...event,
             preferred: iconType === "preferred" ? !event.preferred : false,
@@ -151,15 +151,16 @@ const CalendarEvents = () => {
             max={new Date(0, 0, 0, 22, 0, 0)}
             dayLayoutAlgorithm={"no-overlap"}
             components={{
-              event: (props) => (
+              event: (props) => {
+                return (
                 <CustomEvent
                   {...props}
                   eventState={eventStates[currentCourse]?.find(
                     (state) => state.id === props.event.id,
                   )}
                   onEventClick={handleEventClick}
-                />
-              ),
+                />)
+                },
               toolbar: (props) => (
                 <CustomToolbar
                   {...props}
