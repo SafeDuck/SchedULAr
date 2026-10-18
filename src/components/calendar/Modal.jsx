@@ -31,7 +31,7 @@ const Modal = ({ event, setEvent, course }) => {
       }
     });
     const results = await Promise.all(reqs);
-    console.log(results)
+    console.log(results);
     return results;
   };
 
@@ -79,7 +79,7 @@ const Modal = ({ event, setEvent, course }) => {
     }
   }, [users, event.ula]);
 
-  const handleUserClick = async (group, index, name) => { 
+  const handleUserClick = async (group, index, name) => {
     try {
       if (!session.data.user.admin) {
         // TODO: Fix Bug session bug
