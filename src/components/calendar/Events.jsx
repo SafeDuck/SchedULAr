@@ -108,11 +108,11 @@ const CalendarEvents = () => {
     });
   }
   // console.log(eventStates)
-  
+
   const handleEventClick = (e, eventId, iconType) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setEventStates((prevStates) => ({
-      ...prevStates, 
+      ...prevStates,
       [currentCourse]: prevStates[currentCourse]?.map((event) => {
         if (event.id === eventId) {
           return {
@@ -153,14 +153,15 @@ const CalendarEvents = () => {
             components={{
               event: (props) => {
                 return (
-                <CustomEvent
-                  {...props}
-                  eventState={eventStates[currentCourse]?.find(
-                    (state) => state.id === props.event.id,
-                  )}
-                  onEventClick={handleEventClick}
-                />)
-                },
+                  <CustomEvent
+                    {...props}
+                    eventState={eventStates[currentCourse]?.find(
+                      (state) => state.id === props.event.id,
+                    )}
+                    onEventClick={handleEventClick}
+                  />
+                );
+              },
               toolbar: (props) => (
                 <CustomToolbar
                   {...props}

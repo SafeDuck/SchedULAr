@@ -8,6 +8,7 @@
 ![Prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E)
 
 ## About Project
+
 This project is a scheduling tool designed to streamline the process of assigning Undergraduate Learning Assistants (ULAs) to CS lab sessions. Instead of manually copying lab schedules into a spreadsheet each quarter, the website pulls course data directly from the Banner API and displays it in a calendar. ULAs can input their availability, and the supervisor can assign shifts with an easy-to-use interface. This tool simplifies scheduling, reduces manual work, and makes the process more maintainable for future quarters.
 
 ## Node.js
@@ -80,8 +81,11 @@ npm run build
 ```
 
 ## Main Functionalities
+
 ### 1. Lab sections for each course are automactially pulled from the Banner API
+
 ### 2. ULA select list their availbility for each lab section
+
 - Double check mark (available)
 - Single check mark (available if needed)
 - Cross mark (not available)
@@ -89,7 +93,9 @@ npm run build
 - Hit the submit button
 
 ![image](https://github.com/user-attachments/assets/0543ed94-02bf-4dc1-b98f-dc0d0389c98c)
+
 ### 3. Click on a lab section to show pop-up modal
+
 - Displays the course, course section number, and location of the lab
 - Displays availability for all ULA
 - Click on a ULA's name to assign them to the lab section (admin only)
