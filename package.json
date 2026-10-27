@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "npx prettier --write .",
-    "check": "npx prettier --check ."
+    "format": "prettier --write .",
+    "check": "prettier --check ."
   },
   "dependencies": {
     "@radix-ui/react-switch": "^1.1.1",
